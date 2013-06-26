@@ -33,106 +33,85 @@
 	<script>
 	
 	var map;
+	var markerBounds = new google.maps.LatLngBounds();
+	var directionsDisplay = new google.maps.DirectionsRenderer();
+	var directionsService = new google.maps.DirectionsService();
+	var allLatLong;
+
+	function findCenter()
+	{
+		initialize();
+	}
 
 	function getLocation()
 	{
-		initialize();
-		getBillToLocation();
-		getShipperLocation();
-		getConsigneeLocation();
+		// add bill to markers
+		//addMarker(<?php echo $all_lanes[0]['bill_to_lat'];?>,<?php echo $all_lanes[0]['bill_to_lng'];?>);
+
+		addMarker(<?php echo $all_lanes[0]['shipper_lat'];?> , <?php echo $all_lanes[0]['shipper_lng'];?>);
+		addMarker(<?php echo $all_lanes[0]['consignee_lat'];?>,<?php echo $all_lanes[0]['consignee_lng'];?>);
+		calcRoute(<?php echo $all_lanes[0]['shipper_lat'];?> , <?php echo $all_lanes[0]['shipper_lng'];?>, <?php echo $all_lanes[0]['consignee_lat'];?>,<?php echo $all_lanes[0]['consignee_lng'];?>);
 	}
 
-	function getBillToLocation()
-	{
-		var location_bill_to = "<?php echo $all_lanes[0]['bill_to_address'].','.$all_lanes[0]['bill_to_city'].','.$all_lanes[0]['bill_to_state'].','.$all_lanes[0]['bill_to_zipcode'];?>";
 
-		var location_XML_request = "http://maps.googleapis.com/maps/api/geocode/xml?address="+location_bill_to+"&sensor=false";
-		loadXMLGeocode(location_XML_request);
-	}
-
-	function getShipperLocation()
-	{
-		var location_shipper = "<?php echo $all_lanes[0]['shipper_address'].','.$all_lanes[0]['shipper_city'].','.$all_lanes[0]['shipper_state'].','.$all_lanes[0]['shipper_zipcode'];?>";
-
-		var location_XML_request = "http://maps.googleapis.com/maps/api/geocode/xml?address="+location_shipper+"&sensor=false";
-		loadXMLGeocode(location_XML_request);
-	}
-
-	function getConsigneeLocation()
-	{
-		var location_consignee = "<?php echo $all_lanes[0]['consignee_address'].','.$all_lanes[0]['consignee_city'].','.$all_lanes[0]['consignee_state'].','.$all_lanes[0]['consignee_zipcode'];?>";
-
-		var location_XML_request = "http://maps.googleapis.com/maps/api/geocode/xml?address="+location_consignee+"&sensor=false";
-		loadXMLGeocode(location_XML_request);
-	}
-
-	function loadXMLGeocode(locationXMLRequest)
-	{
-		var xmlhttp;
-		var xmlDoc;
-		if (window.XMLHttpRequest)
-		{// code for IE7+, Firefox, Chrome, Opera, Safari
-			xmlhttp = new XMLHttpRequest();
-		}
-		else
-		{// code for IE6, IE5
-			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		}
-
-		xmlhttp.open("GET",locationXMLRequest,true);
-		xmlhttp.send();
-
-		xmlhttp.onreadystatechange=function()
-		{
-			if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			{
-				xmlDoc=xmlhttp.responseXML;
-				parseLocationXML(xmlDoc);
-			}	
-		}
-	}
-
-	function parseLocationXML(xmlDoc)
-	{
-		// check each "status"
-		var status = xmlDoc.getElementsByTagName("status")[0].childNodes[0].nodeValue;
-
-		if(status === 'OK')
-		{
-			var lat = xmlDoc.getElementsByTagName("lat")[0].childNodes[0].nodeValue;
-			var lng = xmlDoc.getElementsByTagName("lng")[0].childNodes[0].nodeValue;
-			var location = new google.maps.LatLng(lat, lng);
-			addMarker(location);
-			document.getElementById('directions-panel').innerHTML += 'failure: ' + location + '<br>';
-		}
-		else
-		{
-			document.getElementById('directions-panel').innerHTML += 'failure: ' + locationXMLRequest + '<br>';
-		}	
-	}
-
-	function initialize() 
+	function initialize(lat, lng) 
 	{
 		//initialize map
 		var mapOptions = new Object();
-		mapOptions.zoom = 6;
+		mapOptions.zoom = 10;
 		mapOptions.mapTypeId = google.maps.MapTypeId.ROADMAP;
-		mapOptions.center = new google.maps.LatLng(40.406122, -76.53691750000002);
+		mapOptions.center = new google.maps.LatLng(40.4061220, -76.5369175);
 		map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+		getLocation();
+		directionsDisplay.setMap(map);
+		//directionsDisplay.setPanel(document.getElementById("directions-panel"));
 	}
 
-	function addMarker(location)
+	function addMarker(lat, lng)
 	{	
+		var location = new google.maps.LatLng(lat, lng);
 		var marker = new google.maps.Marker({
 			position: location,
 			map: map
 		});
+
+		markerBounds.extend(location)
+		map.fitBounds(markerBounds);
+	}
+
+	function myLine(location)
+	{	
+		var myLine = new google.maps.Polyline({
+			map: map,
+			path: location,
+    		strokeColor: '#FF0000',
+    		strokeOpacity: 0.75,
+    		strokeWeight: 3
+  		});
+	}
+
+	function calcRoute(lat1, lng1, lat2, lng2)
+	{
+		var request = {
+			origin: new google.maps.LatLng(lat1, lng1),
+			destination: new google.maps.LatLng(lat2, lng2),
+			travelMode: google.maps.TravelMode.DRIVING
+		};
+
+		directionsService.route(request, function(result, status) {
+    		if (status == google.maps.DirectionsStatus.OK) 
+    		{
+      			//directionsDisplay.setDirections(result);
+      			allLatLong = result.routes[0].overview_path;
+     			myLine(allLatLong);
+    		}
+  		});
 	}
 	
 	</script>
 
 </head>
-<body onload="getLocation()">
+<body onload="initialize()">
 	<div id="map-canvas"></div>
 	<div id="directions-panel"></div>
 </body>
