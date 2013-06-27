@@ -66,13 +66,13 @@
 		map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
 		// add marker to center_location
-		var marker = new google.maps.Marker({
+		/*var marker = new google.maps.Marker({
 			position: center_location,
 			map: map
 		});
 
 		markerBounds.extend(center_location);
-		map.fitBounds(markerBounds);
+		map.fitBounds(markerBounds);*/
 
 		directionsDisplay.setMap(map);
 
@@ -83,25 +83,26 @@
 
 	function getLocation(lane_id)
 	{
+		// add marker and directions for primary run
 		var shipper_primary = new google.maps.LatLng(all_lanes[lane_id].shipper_lat, all_lanes[lane_id].shipper_lng);
 		var consignee_primary = new google.maps.LatLng(all_lanes[lane_id].consignee_lat, all_lanes[lane_id].consignee_lng);
-		if(all_lanes[lane_id].secondary_lanes != null)
-		{
-			var shipper_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[0].shipper_lat, all_lanes[lane_id].secondary_lanes[0].shipper_lng);
-			var consignee_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[0].consignee_lat, all_lanes[lane_id].secondary_lanes[0].consignee_lng);
-		}
 		addMarker(shipper_primary);
 		addMarker(consignee_primary);
-		addMarker(shipper_secondary);
-		addMarker(consignee_secondary);
-		var waypts = [];
-		waypts.push({
-          location:consignee_primary,
-          stopover:true});
-		waypts.push({
-          location:shipper_secondary,
-          stopover:true});
-		calcRoute(shipper_primary,waypts,consignee_secondary);
+		calcRoute(shipper_primary,consignee_primary,"#373737");
+
+		// add marker and directions for primary run
+		if(all_lanes[lane_id].secondary_lanes != null)
+		{
+			for(var i=0; i<all_lanes[lane_id].secondary_lanes.length; i++)
+			{
+				var shipper_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[i].shipper_lat, all_lanes[lane_id].secondary_lanes[i].shipper_lng);
+				var consignee_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[i].consignee_lat, all_lanes[lane_id].secondary_lanes[i].consignee_lng);
+				addMarker(shipper_secondary);
+				addMarker(consignee_secondary);
+				calcRoute(consignee_primary,shipper_secondary,"#2C9AB7");
+				calcRoute(shipper_secondary,consignee_secondary,"#DB3A1B");
+			}
+		}
 	}
 
 	function addMarker(location)
@@ -115,23 +116,22 @@
 		map.fitBounds(markerBounds);
 	}
 
-	function myLine(path)
+	function myLine(path,color)
 	{	
 		var myLine = new google.maps.Polyline({
 			map: map,
 			path: path,
-			strokeColor: '#FF0000',
-			strokeOpacity: 0.5,
+			strokeColor: color,
+			strokeOpacity: 0.75,
 			strokeWeight: 3.5
 		});
 	}
 
-	function calcRoute(shipper_primary,waypts,consignee_secondary)
+	function calcRoute(origin,destination,color)
 	{
 		var request = {
-			origin: shipper_primary,
-			destination: consignee_secondary,
-			waypoints: waypts,
+			origin: origin,
+			destination: destination,
 			travelMode: google.maps.TravelMode.DRIVING
 		};
 
@@ -144,7 +144,7 @@
       			*/
 
       			allLatLong = result.routes[0].overview_path;
-      			myLine(allLatLong);
+      			myLine(allLatLong,color);
       		}
       	});
 	}
