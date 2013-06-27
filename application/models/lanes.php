@@ -8,25 +8,18 @@ class Lanes extends CI_Model {
         parent::__construct();
     }
 
-    function get_lane()
+    function get_all_primary_and_secondary_lanes()
     {
-        $query = $this->db->get('lanes');
+        $this->db->where('primary_account',0);
+        $primary_lanes = $this->db->get('lanes');
         
         $all_lanes = array();
 
-        if ($query->num_rows() > 0)
+        if ($primary_lanes->num_rows() > 0)
         {
-            foreach ($query->result() as $row)
+            foreach ($primary_lanes->result() as $row)
             {
                 $lane = array(
-                    'bill_to_code'      => $row->bill_to_code,
-                    'bill_to_name'      => $row->bill_to_name,
-                    'bill_to_address'   => $row->bill_to_address,
-                    'bill_to_city'      => $row->bill_to_city,
-                    'bill_to_state'     => $row->bill_to_state,
-                    'bill_to_zipcode'   => $row->bill_to_zipcode,
-                    'bill_to_lat'       => $row->bill_to_lat,
-                    'bill_to_lng'       => $row->bill_to_lng,
                     'shipper_code'      => $row->shipper_code,
                     'shipper_name'      => $row->shipper_name,
                     'shipper_address'   => $row->shipper_address,
@@ -46,12 +39,48 @@ class Lanes extends CI_Model {
                     'commodity'         => $row->commodity,
                     'commodity_code'    => $row->commodity_code,
                     'number_of_loads'   => $row->number_of_loads,
-                    'miles'             => $row->miles
+                    'miles'             => $row->miles,
+                    'secondary_lanes'   => NULL
                 );
+  
+                $this->db->where('primary_account',$lane['consignee_code']);
+                $secondary_lanes = $this->db->get('lanes');
                 
-                $all_lanes[] = $lane;
+                if($secondary_lanes->num_rows() > 0)
+                {
+                    foreach($secondary_lanes->result() as $sub_row)
+                    {
+                        $sub_lane = array(
+                            'shipper_code'      => $sub_row->shipper_code,
+                            'shipper_name'      => $sub_row->shipper_name,
+                            'shipper_address'   => $sub_row->shipper_address,
+                            'shipper_city'      => $sub_row->shipper_city,
+                            'shipper_state'     => $sub_row->shipper_state,
+                            'shipper_zipcode'   => $sub_row->shipper_zipcode,
+                            'shipper_lat'       => $sub_row->shipper_lat,
+                            'shipper_lng'       => $sub_row->shipper_lng,
+                            'consignee_code'    => $sub_row->consignee_code,
+                            'consignee_name'    => $sub_row->consignee_name,
+                            'consignee_address' => $sub_row->consignee_address,
+                            'consignee_city'    => $sub_row->consignee_city,
+                            'consignee_state'   => $sub_row->consignee_state,
+                            'consignee_zipcode' => $sub_row->consignee_zipcode,
+                            'consignee_lat'     => $sub_row->consignee_lat,
+                            'consignee_lng'     => $sub_row->consignee_lng,
+                            'commodity'         => $sub_row->commodity,
+                            'commodity_code'    => $sub_row->commodity_code,
+                            'number_of_loads'   => $sub_row->number_of_loads,
+                            'miles'             => $sub_row->miles
+                        );
+                        
+                        $lane['secondary_lanes'][] = $sub_lane;
+                    }
+                }
+
+                $all_lanes[$row->consignee_code.'-'.$row->commodity_code] = $lane;
             }
         }
+        //var_dump($all_lanes);
         return $all_lanes;
     }
 }

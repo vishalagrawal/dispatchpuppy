@@ -6,24 +6,36 @@
 	<link rel="stylesheet" type="text/css" href="<?php echo asset_url().'css/main.css'; ?>">
 
 	<style>
-	html,body
-	{
-		height: 100%;
-		margin: 0;
-		padding: 0;
-	}
-	#map-canvas
-	{
-		width: 75%;
-		height:100%;
-		float: left;
-	}
-	#directions-panel
-	{
-		width: 25%;
-		height: 100%;
-		float: right;
-	}
+		html,body
+		{
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		#map-canvas
+		{
+			width: 75%;
+			height:100%;
+			float: left;
+		}
+		#directions-panel
+		{
+			width: 25%;
+			height: 100%;
+			float: right;
+		}
+		#text
+		{
+			margin: 2%;
+		}
+		input
+		{
+			padding: 1%;
+		}
+		#info
+		{
+			padding: 5%;
+		}
 	</style>
 
 	<script type="text/javascript"
@@ -36,76 +48,105 @@
 	var markerBounds = new google.maps.LatLngBounds();
 	var directionsDisplay = new google.maps.DirectionsRenderer();
 	var directionsService = new google.maps.DirectionsService();
-	var allLatLong;
+	var all_lanes = <?php echo json_encode($all_lanes);?>
 
-	function findCenter()
+	function initialize() 
 	{
-		initialize();
-	}
+		// create variable for to store co-ordinates of center location
+		var center_location = new google.maps.LatLng(<?php echo $google_map_center_location['location_lat'];?>, <?php echo $google_map_center_location['location_lng'];?>);
 
-	function getLocation()
-	{
-		// add bill to markers
-		//addMarker(<?php echo $all_lanes[0]['bill_to_lat'];?>,<?php echo $all_lanes[0]['bill_to_lng'];?>);
+		// set the map options
+		var mapOptions = {
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			zoom: 7,
+			center: center_location
+		};
 
-		addMarker(<?php echo $all_lanes[0]['shipper_lat'];?> , <?php echo $all_lanes[0]['shipper_lng'];?>);
-		addMarker(<?php echo $all_lanes[0]['consignee_lat'];?>,<?php echo $all_lanes[0]['consignee_lng'];?>);
-		calcRoute(<?php echo $all_lanes[0]['shipper_lat'];?> , <?php echo $all_lanes[0]['shipper_lng'];?>, <?php echo $all_lanes[0]['consignee_lat'];?>,<?php echo $all_lanes[0]['consignee_lng'];?>);
-	}
-
-
-	function initialize(lat, lng) 
-	{
-		//initialize map
-		var mapOptions = new Object();
-		mapOptions.zoom = 10;
-		mapOptions.mapTypeId = google.maps.MapTypeId.ROADMAP;
-		mapOptions.center = new google.maps.LatLng(40.4061220, -76.5369175);
+		// render map
 		map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-		getLocation();
+
+		// add marker to center_location
+		var marker = new google.maps.Marker({
+			position: center_location,
+			map: map
+		});
+
+		markerBounds.extend(center_location);
+		map.fitBounds(markerBounds);
+
 		directionsDisplay.setMap(map);
-		//directionsDisplay.setPanel(document.getElementById("directions-panel"));
+
+		/* 
+		//code to show the driving directions text
+		directionsDisplay.setPanel(document.getElementById("directions-panel"));*/
 	}
 
-	function addMarker(lat, lng)
+	function getLocation(lane_id)
+	{
+		var shipper_primary = new google.maps.LatLng(all_lanes[lane_id].shipper_lat, all_lanes[lane_id].shipper_lng);
+		var consignee_primary = new google.maps.LatLng(all_lanes[lane_id].consignee_lat, all_lanes[lane_id].consignee_lng);
+		if(all_lanes[lane_id].secondary_lanes != null)
+		{
+			var shipper_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[0].shipper_lat, all_lanes[lane_id].secondary_lanes[0].shipper_lng);
+			var consignee_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[0].consignee_lat, all_lanes[lane_id].secondary_lanes[0].consignee_lng);
+		}
+		addMarker(shipper_primary);
+		addMarker(consignee_primary);
+		addMarker(shipper_secondary);
+		addMarker(consignee_secondary);
+		var waypts = [];
+		waypts.push({
+          location:consignee_primary,
+          stopover:true});
+		waypts.push({
+          location:shipper_secondary,
+          stopover:true});
+		calcRoute(shipper_primary,waypts,consignee_secondary);
+	}
+
+	function addMarker(location)
 	{	
-		var location = new google.maps.LatLng(lat, lng);
 		var marker = new google.maps.Marker({
 			position: location,
 			map: map
 		});
 
-		markerBounds.extend(location)
+		markerBounds.extend(location);
 		map.fitBounds(markerBounds);
 	}
 
-	function myLine(location)
+	function myLine(path)
 	{	
 		var myLine = new google.maps.Polyline({
 			map: map,
-			path: location,
-    		strokeColor: '#FF0000',
-    		strokeOpacity: 0.75,
-    		strokeWeight: 3
-  		});
+			path: path,
+			strokeColor: '#FF0000',
+			strokeOpacity: 0.5,
+			strokeWeight: 3.5
+		});
 	}
 
-	function calcRoute(lat1, lng1, lat2, lng2)
+	function calcRoute(shipper_primary,waypts,consignee_secondary)
 	{
 		var request = {
-			origin: new google.maps.LatLng(lat1, lng1),
-			destination: new google.maps.LatLng(lat2, lng2),
+			origin: shipper_primary,
+			destination: consignee_secondary,
+			waypoints: waypts,
 			travelMode: google.maps.TravelMode.DRIVING
 		};
 
 		directionsService.route(request, function(result, status) {
-    		if (status == google.maps.DirectionsStatus.OK) 
-    		{
-      			//directionsDisplay.setDirections(result);
+			if (status == google.maps.DirectionsStatus.OK) 
+			{
+      			/*
+      			//code to show the driving directions line
+      			directionsDisplay.setDirections(result); 
+      			*/
+
       			allLatLong = result.routes[0].overview_path;
-     			myLine(allLatLong);
-    		}
-  		});
+      			myLine(allLatLong);
+      		}
+      	});
 	}
 	
 	</script>
@@ -113,6 +154,22 @@
 </head>
 <body onload="initialize()">
 	<div id="map-canvas"></div>
-	<div id="directions-panel"></div>
+	<div id="directions-panel">
+		<div id="text">
+			<?php
+				foreach($all_lanes as $row)
+				{
+					//echo json_encode($all_lanes);
+					echo '<div id="info '.$row['consignee_code'].'-'.$row['commodity_code'].'">'
+						.'<input type="checkbox" onclick="getLocation(\''.$row['consignee_code'].'-'.$row['commodity_code'].'\')">'
+						.$row['shipper_city'].', '.$row['shipper_state']
+						.' - '
+						.$row['consignee_city'].', '.$row['consignee_state']
+						.' ('.$row['commodity_code'].')'
+						.'</div>';
+				}
+			?>
+		</div>
+	</div>
 </body>
 </html>
