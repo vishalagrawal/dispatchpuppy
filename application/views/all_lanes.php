@@ -11,31 +11,54 @@
 			height: 100%;
 			margin: 0;
 			padding: 0;
+			font-size: 11pt;
 		}
+
 		#map-canvas
 		{
-			width: 75%;
+			width: 61.8%; /*golden ration percentage*/
 			height:100%;
 			float: left;
 		}
+
 		#directions-panel
 		{
-			width: 25%;
+			width: 38.2%; /*golden ration percentage*/
 			height: 100%;
 			float: right;
 		}
+
 		#text
 		{
 			margin: 2%;
+			height: 98%;
 		}
-		input
+
+		div.all-lanes-info
 		{
-			padding: 1%;
+			padding: 10%;
 		}
-		#info
+		
+		#left-checkbox
 		{
-			padding: 5%;
+			width: 5%;
+			height: 100%;	
+			float: left;
 		}
+
+		#right-text
+		{
+			width: 95%;
+			height: 100%;
+			float: right;
+		}
+
+		div.commodity-info
+		{
+			font-size: 10pt;
+		}
+
+
 	</style>
 
 	<script type="text/javascript"
@@ -48,8 +71,10 @@
 	var markerBounds = new google.maps.LatLngBounds();
 	var directionsDisplay = new google.maps.DirectionsRenderer();
 	var directionsService = new google.maps.DirectionsService();
-	var empty_miles = "#BF0404";
-	var loaded_miles = "#32A62E";
+	var primary_lane_loaded_miles = "#327EA3";
+	var loaded_miles = "#6CA338";
+	var empty_miles = "#E82C0C";
+	var MY_MAPTYPE_ID = 'custom_style';
 	var all_lanes = <?php echo json_encode($all_lanes);?>;
 
 	function initialize() 
@@ -61,11 +86,44 @@
 		var mapOptions = {
 			mapTypeId: google.maps.MapTypeId.ROADMAP,
 			zoom: 7,
-			center: center_location
+			center: center_location,
+			mapTypeId: MY_MAPTYPE_ID
 		};
+
+		var featureOpts = [
+			{
+				featureType: 'road',
+				elementType: 'all',
+      			stylers: [
+        			{ lightness: 40 }
+      			]
+			},
+			{
+				featureType: 'administrative.locality',
+				elementType: 'labels.text',
+      			stylers: [
+        			{ lightness: 30 }
+      			]
+			},
+			{
+				featureType: 'poi',
+				elementType: 'label.text',
+				stylers: [
+        			{ visibility: 'off' }
+      			]
+			}
+		];
+
+		var styledMapOptions = {
+			name: 'JPD'
+		}
 
 		// render map
 		map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+		
+		// add custom style
+		var customMapType = new google.maps.StyledMapType(featureOpts, styledMapOptions);
+  		map.mapTypes.set(MY_MAPTYPE_ID, customMapType);
 
 		// add marker to center_location
 		/*var marker = new google.maps.Marker({
@@ -85,45 +143,82 @@
 
 	function getLocation(lane_id)
 	{
-		// add marker and directions for primary run
-		var shipper_primary = new google.maps.LatLng(all_lanes[lane_id].shipper_lat, all_lanes[lane_id].shipper_lng);
-		var consignee_primary = new google.maps.LatLng(all_lanes[lane_id].consignee_lat, all_lanes[lane_id].consignee_lng);
-		addMarker(shipper_primary);
-		addMarker(consignee_primary);
-		calcRoute(shipper_primary,consignee_primary,loaded_miles);
+		// get the lane info
+		var lane = all_lanes[lane_id];
+
+		// add marker for primary shipper
+		var shipper_primary_location = new google.maps.LatLng(lane.shipper_lat, lane.shipper_lng);
+		var shipper_primary_title = lane.shipper_name;
+		var shipper_primary_content = lane.shipper_name+'<br>'+lane.shipper_address+'<br>'+lane.shipper_city+' ,'+lane.shipper_state+' '+lane.shipper_zipcode;
+		addMarker(shipper_primary_location,shipper_primary_title,shipper_primary_content);
+
+		// add marker for primary consignee
+		var consignee_primary_location = new google.maps.LatLng(lane.consignee_lat, lane.consignee_lng);
+		addMarker(consignee_primary_location);
+		var consignee_primary_title = lane.consignee_name;
+		var consignee_primary_content = lane.consignee_name+'<br>'+lane.consignee_address+'<br>'+lane.consignee_city+' ,'+lane.consignee_state+' '+lane.consignee_zipcode;
+		addMarker(consignee_primary_location,consignee_primary_title,consignee_primary_content);
+
+
+		// crow fly from primary shipper to primary consignee
+		drawPath([shipper_primary_location, consignee_primary_location],primary_lane_loaded_miles);
+
+		// map directions from primary shipper to primary consignee
+		//calcRoute(shipper_primary_location,consignee_primary_location,loaded_miles);
 
 		// add marker and directions for primary run
-		if(all_lanes[lane_id].secondary_lanes != null)
+		if(lane.secondary_lanes != null)
 		{
-			for(var i=0; i<all_lanes[lane_id].secondary_lanes.length; i++)
+			for(var i=0; i<lane.secondary_lanes.length; i++)
 			{
-				var shipper_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[i].shipper_lat, all_lanes[lane_id].secondary_lanes[i].shipper_lng);
-				var consignee_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[i].consignee_lat, all_lanes[lane_id].secondary_lanes[i].consignee_lng);
-				addMarker(shipper_secondary);
-				addMarker(consignee_secondary);
-				calcRoute(consignee_primary,shipper_secondary,empty_miles);
-				calcRoute(shipper_secondary,consignee_secondary,loaded_miles);
+				// get the sub lane info
+				var sub_lane = lane.secondary_lanes[i];
+
+				// add marker for secondary shipper
+				var shipper_secondary_location = new google.maps.LatLng(sub_lane.shipper_lat, sub_lane.shipper_lng);
+				var shipper_secondary_title = sub_lane.shipper_name;
+				var shipper_secondary_content = sub_lane.shipper_name+'<br>'+sub_lane.shipper_address+'<br>'+sub_lane.shipper_city+' ,'+sub_lane.shipper_state+' '+sub_lane.shipper_zipcode;
+				addMarker(shipper_secondary_location,shipper_secondary_title,shipper_secondary_content);
+
+				// crow fly from primary consignee to secondary shipper
+				//drawPath([consignee_primary_location, shipper_secondary_location],empty_miles);
+
+
+				// map directions from primary consignee to secondary shipper
+				calcRoute(consignee_primary_location,shipper_secondary_location,empty_miles);
+
+				// add marker for secondary consignee
+				var consignee_secondary_location = new google.maps.LatLng(sub_lane.consignee_lat, sub_lane.consignee_lng);
+				var consignee_secondary_title = sub_lane.consignee_name;
+				var consignee_secondary_content = sub_lane.consignee_name+'<br>'+sub_lane.consignee_address+'<br>'+sub_lane.consignee_city+' ,'+sub_lane.consignee_state+' '+sub_lane.consignee_zipcode;
+				addMarker(consignee_secondary_location,consignee_secondary_title,consignee_secondary_content);
+
+				// crow fly from secondary shipper to secondary consignee		
+				//drawPath([shipper_secondary_location, consignee_secondary_location],loaded_miles);
+
+				// map directions from secondary shipper to secondary consignee			
+				calcRoute(shipper_secondary_location,consignee_secondary_location,loaded_miles);
 			}
 		}
 		else
 		{
-			var path = [consignee_primary, shipper_primary]; 
-			myLine(path, empty_miles);
+			calcRoute(consignee_primary_location, shipper_primary_location, empty_miles);
 		}
 	}
 
-	function addMarker(location)
+	function addMarker(location, title, info)
 	{	
 		var marker = new google.maps.Marker({
 			position: location,
-			map: map
+			map: map,
+			title: title
 		});
 
 		markerBounds.extend(location);
 		map.fitBounds(markerBounds);
 	}
 
-	function myLine(path,color)
+	function drawPath(path,color)
 	{	
 		var myLine = new google.maps.Polyline({
 			map: map,
@@ -151,7 +246,7 @@
       			*/
 
       			allLatLong = result.routes[0].overview_path;
-      			myLine(allLatLong,color);
+      			drawPath(allLatLong,color);
       		}
       	});
 	}
@@ -164,15 +259,23 @@
 	<div id="directions-panel">
 		<div id="text">
 			<?php
-				foreach($all_lanes as $row)
+				foreach($all_lanes as $lane)
 				{
-					//echo json_encode($all_lanes);
-					echo '<div id="info '.$row['consignee_code'].'-'.$row['commodity_code'].'">'
-						.'<input type="checkbox" onclick="getLocation(\''.$row['consignee_code'].'-'.$row['commodity_code'].'\')">'
-						.$row['shipper_city'].', '.$row['shipper_state']
-						.' - '
-						.$row['consignee_city'].', '.$row['consignee_state']
-						.' ('.$row['commodity_code'].')'
+					echo '<div class="all-lanes-info" id="'.$lane['consignee_code'].'-'.$lane['commodity_code'].'">'
+							.'<div id="left-checkbox">'
+								.'<input type="checkbox" onclick="getLocation(\''.$lane['consignee_code'].'-'.$lane['commodity_code'].'\')">'
+							.'</div>'
+							.'<div id="right-text">'
+								.'<div class="lane-info">'
+									.$lane['shipper_name'].' - '.$lane['shipper_city'].', '.$lane['shipper_state']
+									.'<br>'
+									.$lane['consignee_name'].' - '.$lane['consignee_city'].', '.$lane['consignee_state']
+									.'<br>'
+								.'</div>'
+								.'<div class="commodity-info">'
+									.$lane['commodity'].' ('.$lane['commodity_code'].')'
+								.'</div>'
+							.'</div>'
 						.'</div>';
 				}
 			?>
