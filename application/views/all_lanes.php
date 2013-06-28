@@ -48,7 +48,9 @@
 	var markerBounds = new google.maps.LatLngBounds();
 	var directionsDisplay = new google.maps.DirectionsRenderer();
 	var directionsService = new google.maps.DirectionsService();
-	var all_lanes = <?php echo json_encode($all_lanes);?>
+	var empty_miles = "#BF0404";
+	var loaded_miles = "#32A62E";
+	var all_lanes = <?php echo json_encode($all_lanes);?>;
 
 	function initialize() 
 	{
@@ -88,7 +90,7 @@
 		var consignee_primary = new google.maps.LatLng(all_lanes[lane_id].consignee_lat, all_lanes[lane_id].consignee_lng);
 		addMarker(shipper_primary);
 		addMarker(consignee_primary);
-		calcRoute(shipper_primary,consignee_primary,"#373737");
+		calcRoute(shipper_primary,consignee_primary,loaded_miles);
 
 		// add marker and directions for primary run
 		if(all_lanes[lane_id].secondary_lanes != null)
@@ -99,9 +101,14 @@
 				var consignee_secondary = new google.maps.LatLng(all_lanes[lane_id].secondary_lanes[i].consignee_lat, all_lanes[lane_id].secondary_lanes[i].consignee_lng);
 				addMarker(shipper_secondary);
 				addMarker(consignee_secondary);
-				calcRoute(consignee_primary,shipper_secondary,"#2C9AB7");
-				calcRoute(shipper_secondary,consignee_secondary,"#DB3A1B");
+				calcRoute(consignee_primary,shipper_secondary,empty_miles);
+				calcRoute(shipper_secondary,consignee_secondary,loaded_miles);
 			}
+		}
+		else
+		{
+			var path = [consignee_primary, shipper_primary]; 
+			myLine(path, empty_miles);
 		}
 	}
 
