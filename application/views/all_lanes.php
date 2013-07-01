@@ -205,7 +205,7 @@
 		*/
 	}
 
-	function getLocation(lane_id)
+	function getLaneLocation(lane_id)
 	{
 		// get the lane info
 		var lane = all_lanes[lane_id];
@@ -225,56 +225,16 @@
 			addMarker(consignee_primary_location, consignee_primary_title, consignee_primary_content, lane_id+'-consignee');
 
 			// crow fly from primary shipper to primary consignee
-			drawPath([shipper_primary_location, consignee_primary_location],primary_lane_loaded_miles, lane_id);
+			//drawPath([shipper_primary_location, consignee_primary_location],primary_lane_loaded_miles, lane_id);
 
 			// map directions from primary shipper to primary consignee
-			//calcRoute(shipper_primary_location,consignee_primary_location,loaded_miles);
+			calcRoute(shipper_primary_location,consignee_primary_location,primary_lane_loaded_miles, lane_id);
 
-			// add marker and directions for primary run
-			if(lane.secondary_lanes != null)
+			for(var sub_lane_id in lane.secondary_lanes)
 			{
-				for(var i=0; i<lane.secondary_lanes.length; i++)
-				{
-					// get the sub lane info
-					var sub_lane = lane.secondary_lanes[i];
-
-					// create the sub_lane_id
-					var sub_lane_id = lane.consignee_code+'-'+lane.commodity_code+'-'+sub_lane.consignee_code+'-'+sub_lane.commodity_code;
-
-					// display the sub-lane div
-					document.getElementById(sub_lane_id).style.visibility = 'visible';
-					document.getElementById(sub_lane_id+'-checkbox').checked = true;
-
-					document.getElementById(sub_lane_id).style.position = 'relative';
-
-					// add marker for secondary shipper
-					var shipper_secondary_location = new google.maps.LatLng(sub_lane.shipper_lat, sub_lane.shipper_lng);
-					var shipper_secondary_title = sub_lane.shipper_name;
-					var shipper_secondary_content = sub_lane.shipper_name+'<br>'+sub_lane.shipper_address+'<br>'+sub_lane.shipper_city+' ,'+sub_lane.shipper_state+' '+sub_lane.shipper_zipcode;
-					addMarker(shipper_secondary_location,shipper_secondary_title,shipper_secondary_content,sub_lane_id+'-shipper');
-
-					// crow fly from primary consignee to secondary shipper
-					//drawPath([consignee_primary_location, shipper_secondary_location],empty_miles, sub_lane_id+'-empty');
-
-					// map directions from primary consignee to secondary shipper
-					calcRoute(consignee_primary_location,shipper_secondary_location,empty_miles, sub_lane_id+'-empty');
-
-					// add marker for secondary consignee
-					var consignee_secondary_location = new google.maps.LatLng(sub_lane.consignee_lat, sub_lane.consignee_lng);
-					var consignee_secondary_title = sub_lane.consignee_name;
-					var consignee_secondary_content = sub_lane.consignee_name+'<br>'+sub_lane.consignee_address+'<br>'+sub_lane.consignee_city+' ,'+sub_lane.consignee_state+' '+sub_lane.consignee_zipcode;
-					addMarker(consignee_secondary_location,consignee_secondary_title,consignee_secondary_content,sub_lane_id+'-consignee');
-
-					// crow fly from secondary shipper to secondary consignee		
-					//drawPath([shipper_secondary_location, consignee_secondary_location],loaded_miles, sub_lane_id);
-
-					// map directions from secondary shipper to secondary consignee			
-					calcRoute(shipper_secondary_location,consignee_secondary_location,loaded_miles, sub_lane_id);
-				}
-			}
-			else
-			{
-				calcRoute(consignee_primary_location, shipper_primary_location, empty_miles, sub_lane_id);
+				// hide the sub-lane div
+				document.getElementById(sub_lane_id).style.visibility = 'visible';
+				document.getElementById(sub_lane_id).style.position = 'relative';
 			}
 		}
 		else
@@ -292,30 +252,30 @@
 
 			if(lane.secondary_lanes != null)
 			{
-				for(var j=0; j<lane.secondary_lanes.length; j++)
+				for(var sub_lane_id in lane.secondary_lanes)
 				{
-					// get the sub lane info
-					var sub_lane = lane.secondary_lanes[j];
-
 					// create the sub_lane_id
-					var sub_lane_id = lane.consignee_code+'-'+lane.commodity_code+'-'+sub_lane.consignee_code+'-'+sub_lane.commodity_code;
+					//var sub_lane_id = lane.consignee_code+'-'+lane.commodity_code+'-'+sub_lane.consignee_code+'-'+sub_lane.commodity_code;
 
-					// remove the poly line from primary consignee to secondary shipper
-					poly_lines[sub_lane_id+'-empty'].setMap(null);
-					delete poly_lines[sub_lane_id+'-empty'];
-					
-					// remove the marker for secondary shipper
-					all_marker[sub_lane_id+'-shipper'].setMap(null);
-					delete all_marker[sub_lane_id+'-shipper'];
+					if(document.getElementById(sub_lane_id+'-checkbox').checked)
+					{
 
-					// remove the poly line from secondary shipper to secondary consignee 
-					poly_lines[sub_lane_id].setMap(null);
-					delete poly_lines[sub_lane_id];
+						// remove the poly line from primary consignee to secondary shipper
+						//poly_lines[sub_lane_id+'-empty'].setMap(null);
+						//delete poly_lines[sub_lane_id+'-empty'];
+						
+						// remove the marker for secondary shipper
+						all_marker[sub_lane_id+'-shipper'].setMap(null);
+						delete all_marker[sub_lane_id+'-shipper'];
 
-					// remove the marker for secondary consignee
-					all_marker[sub_lane_id+'-consignee'].setMap(null);
-					delete all_marker[sub_lane_id+'-consignee'];	
+						// remove the poly line from secondary shipper to secondary consignee 
+						poly_lines[sub_lane_id].setMap(null);
+						delete poly_lines[sub_lane_id];
 
+						// remove the marker for secondary consignee
+						all_marker[sub_lane_id+'-consignee'].setMap(null);
+						delete all_marker[sub_lane_id+'-consignee'];	
+					}
 					// uncheck the checkbox
 					document.getElementById(sub_lane_id+'-checkbox').checked = false;
 
@@ -327,6 +287,55 @@
 		}
 		console.log(all_marker);
 		console.log(poly_lines);
+	}
+
+	function getSubLaneLocation(lane_id, sub_lane_id)
+	{
+		var sub_lane = all_lanes[lane_id].secondary_lanes[sub_lane_id];
+		if(document.getElementById(sub_lane_id+'-checkbox').checked)
+		{
+			// add marker for secondary shipper
+			var shipper_secondary_location = new google.maps.LatLng(sub_lane.shipper_lat, sub_lane.shipper_lng);
+			var shipper_secondary_title = sub_lane.shipper_name;
+			var shipper_secondary_content = sub_lane.shipper_name+'<br>'+sub_lane.shipper_address+'<br>'+sub_lane.shipper_city+' ,'+sub_lane.shipper_state+' '+sub_lane.shipper_zipcode;
+			addMarker(shipper_secondary_location,shipper_secondary_title,shipper_secondary_content,sub_lane_id+'-shipper');
+
+			// crow fly from primary consignee to secondary shipper
+			//drawPath([consignee_primary_location, shipper_secondary_location],empty_miles, sub_lane_id+'-empty');
+
+			// map directions from primary consignee to secondary shipper
+			//calcRoute(consignee_primary_location,shipper_secondary_location,empty_miles, sub_lane_id+'-empty');
+
+			// add marker for secondary consignee
+			var consignee_secondary_location = new google.maps.LatLng(sub_lane.consignee_lat, sub_lane.consignee_lng);
+			var consignee_secondary_title = sub_lane.consignee_name;
+			var consignee_secondary_content = sub_lane.consignee_name+'<br>'+sub_lane.consignee_address+'<br>'+sub_lane.consignee_city+' ,'+sub_lane.consignee_state+' '+sub_lane.consignee_zipcode;
+			addMarker(consignee_secondary_location,consignee_secondary_title,consignee_secondary_content,sub_lane_id+'-consignee');
+
+			// crow fly from secondary shipper to secondary consignee		
+			//drawPath([shipper_secondary_location, consignee_secondary_location],loaded_miles, sub_lane_id);
+
+			// map directions from secondary shipper to secondary consignee			
+			calcRoute(shipper_secondary_location,consignee_secondary_location,loaded_miles, sub_lane_id);
+		}
+		else
+		{
+			// remove the poly line from primary consignee to secondary shipper
+			//poly_lines[sub_lane_id+'-empty'].setMap(null);
+			//delete poly_lines[sub_lane_id+'-empty'];
+						
+			// remove the marker for secondary shipper
+			all_marker[sub_lane_id+'-shipper'].setMap(null);
+			delete all_marker[sub_lane_id+'-shipper'];
+
+			// remove the poly line from secondary shipper to secondary consignee 
+			poly_lines[sub_lane_id].setMap(null);
+			delete poly_lines[sub_lane_id];
+
+			// remove the marker for secondary consignee
+			all_marker[sub_lane_id+'-consignee'].setMap(null);
+			delete all_marker[sub_lane_id+'-consignee'];	
+		}
 	}
 
 	function addMarker(location, title, info, lane_id)
@@ -390,7 +399,7 @@
 				{
 					echo '<div class="lane-info" id="'.$lane['consignee_code'].'-'.$lane['commodity_code'].'">'
 								.'<div class="left-checkbox">'
-									.'<input type="checkbox" id="'.$lane['consignee_code'].'-'.$lane['commodity_code'].'-checkbox" onclick="getLocation(\''.$lane['consignee_code'].'-'.$lane['commodity_code'].'\')">'
+									.'<input type="checkbox" id="'.$lane['consignee_code'].'-'.$lane['commodity_code'].'-checkbox" onclick="getLaneLocation(\''.$lane['consignee_code'].'-'.$lane['commodity_code'].'\')">'
 								.'</div>'
 								.'<div class="right-text">'
 									.'<div class="primary-shipper">'
@@ -411,7 +420,7 @@
 									{
 										echo '<div class="sub-lane-info" id="'.$lane['consignee_code'].'-'.$lane['commodity_code'].'-'.$sub_lane['consignee_code'].'-'.$sub_lane['commodity_code'].'">'
 												.'<div class="left-checkbox">'
-													.'<input type="checkbox" id="'.$lane['consignee_code'].'-'.$lane['commodity_code'].'-'.$sub_lane['consignee_code'].'-'.$sub_lane['commodity_code'].'-checkbox" onclick="getLocation(\''.$sub_lane['consignee_code'].'-'.$sub_lane['commodity_code'].'\')">'
+													.'<input type="checkbox" id="'.$lane['consignee_code'].'-'.$lane['commodity_code'].'-'.$sub_lane['consignee_code'].'-'.$sub_lane['commodity_code'].'-checkbox" onclick="getSubLaneLocation(\''.$lane['consignee_code'].'-'.$lane['commodity_code'].'\',\''.$lane['consignee_code'].'-'.$lane['commodity_code'].'-'.$sub_lane['consignee_code'].'-'.$sub_lane['commodity_code'].'\')">'
 												.'</div>'
 												.'<div class="right-text secondary-right-text">'
 													.'<div class="secondary-shipper">'

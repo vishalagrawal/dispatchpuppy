@@ -73,7 +73,7 @@ class Lanes extends CI_Model {
                             'miles'             => $sub_row->miles
                         );
                         
-                        $lane['secondary_lanes'][] = $sub_lane;
+                        $lane['secondary_lanes'][$row->consignee_code.'-'.$row->commodity_code.'-'.$sub_row->consignee_code.'-'.$sub_row->commodity_code] = $sub_lane;
                     }
                 }
 
