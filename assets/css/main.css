@@ -22,7 +22,9 @@ textarea {
 body {
     font-size: 1em;
     line-height: 1.4;
+
 }
+
 
 /*
  * Remove text-shadow in selection highlight: h5bp.com/i
@@ -31,12 +33,12 @@ body {
  */
 
 ::-moz-selection {
-    background: #b3d4fc;
+    background: #FEDE88;
     text-shadow: none;
 }
 
 ::selection {
-    background: #b3d4fc;
+    background: #FEDE88;
     text-shadow: none;
 }
 
@@ -93,22 +95,104 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
+#map-canvas {
+    width: 61.8%; /*golden ration percentage*/
+    height:100%;
+    float: left;
+    -moz-box-shadow: 0 0 10px #888;
+    -webkit-box-shadow: 0 0 10px#888;
+    box-shadow: 0 0 10px #888;
+    display: inline-block;
+    position: absolute;
+}
 
+#control-panel {
+    width: 38.2%; /*golden ration percentage*/
+    height: 100%;
+    float: right;
+    position: relative;
+    overflow-y: scroll;
+}
 
+div.all-lanes {
+    padding: 0 5% 0 5%;
+    height: 95%;
+    color: #B7B7B7;
+}
 
+div.lane-info {
+    padding-top: 5%;
+    clear: both;
+}
 
+div.left-checkbox { 
+    width: 8%;  
+    float: left;
+    position: relative;
+}
 
+div.right-text {
+    width: 92%;
+    float: right;
+    position: relative; 
+}
 
+div.primary-commodity-info, div.primary-miles {
+    font-size: 0.9em;
+}
 
+div.active-lane .primary-shipper {
+    color: #2C9AB7;
+}
 
+div.active-lane .primary-consignee {
+    color: #449A88;
+}
 
+div.active-lane .primary-commodity-info, div.active-lane .primary-miles {
+    color: #373737;
+}
 
+div.sub-lane-info {
+    padding: 2% 2% 0 0;
+    clear: both;
+    visibility: hidden;
+    position: absolute;
+}
 
+div.secondary-shipper { 
+    font-size: 0.9em;
+}
 
+div.secondary-consignee {
+    font-size: 0.9em;
+}
 
+div.secondary-commodity-info, div.secondary-miles {
+    font-size: 0.8em;
+}
 
+div.secondary-miles {
+    padding-bottom: 2%;
+}
 
+div.active-sub-lane .secondary-shipper {
+    color: #52BAD5;
+}
+
+div.active-sub-lane .secondary-consignee {
+    color: #72C1B0;
+}
+
+div.active-sub-lane .secondary-commodity-info, div.active-sub-lane .secondary-miles {
+    color: #5D5C5D;
+}
 
 /* ==========================================================================
    Helper classes

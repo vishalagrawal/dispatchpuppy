@@ -10,7 +10,9 @@ class Lanes extends CI_Model {
 
     function get_all_primary_and_secondary_lanes()
     {
+        // get all the primary_lanes from the database
         $this->db->where('primary_account',0);
+        $this->db->order_by('shipper_name asc, consignee_name asc, commodity asc');
         $primary_lanes = $this->db->get('lanes');
         
         $all_lanes = array();
@@ -19,6 +21,10 @@ class Lanes extends CI_Model {
         {
             foreach ($primary_lanes->result() as $row)
             {
+                // create lane_id
+                $lane_id = $row->shipper_code.'-'.$row->consignee_code.'-'.$row->commodity_code;
+
+                // create lane
                 $lane = array(
                     'shipper_code'      => $row->shipper_code,
                     'shipper_name'      => $row->shipper_name,
@@ -40,16 +46,20 @@ class Lanes extends CI_Model {
                     'commodity_code'    => $row->commodity_code,
                     'number_of_loads'   => $row->number_of_loads,
                     'miles'             => $row->miles,
-                    'secondary_lanes'   => NULL
+                    'secondary_lanes'   => null
                 );
-  
+                
+                // get all the secondary_lanes for that primary_lane
                 $this->db->where('primary_account',$lane['consignee_code']);
+                $this->db->order_by('shipper_name asc, consignee_name asc, commodity asc');
                 $secondary_lanes = $this->db->get('lanes');
                 
                 if($secondary_lanes->num_rows() > 0)
                 {
                     foreach($secondary_lanes->result() as $sub_row)
                     {
+                        $sub_lane_id = $sub_row->shipper_code.'-'.$sub_row->consignee_code.'-'.$sub_row->commodity_code;
+
                         $sub_lane = array(
                             'shipper_code'      => $sub_row->shipper_code,
                             'shipper_name'      => $sub_row->shipper_name,
@@ -73,11 +83,11 @@ class Lanes extends CI_Model {
                             'miles'             => $sub_row->miles
                         );
                         
-                        $lane['secondary_lanes'][$row->consignee_code.'-'.$row->commodity_code.'-'.$sub_row->consignee_code.'-'.$sub_row->commodity_code] = $sub_lane;
+                        $lane['secondary_lanes'][$sub_lane_id] = $sub_lane;
                     }
                 }
 
-                $all_lanes[$row->consignee_code.'-'.$row->commodity_code] = $lane;
+                $all_lanes[$lane_id] = $lane;
             }
         }
         //var_dump($all_lanes);
