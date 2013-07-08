@@ -11,8 +11,6 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6NH-9BT7BhMwmzicGvy_XPgeaXIdOexA&sensor=false">
 	</script>
 
-	<script type="text/javascript" src="<?php echo asset_url();?>js/map.js"></script>
-
 	<script>
 		/* variable to store center location of map when initialized */
 		var center_location = new google.maps.LatLng(<?php echo $google_map_center_location['location_lat'];?>, <?php echo $google_map_center_location['location_lng'];?>);
@@ -20,6 +18,8 @@
 		/* variable to store all the lane combinations */
 		var all_lanes = <?php echo json_encode($all_lanes);?>;
 	</script>
+
+	<script type="text/javascript" src="<?php echo asset_url();?>js/map.js"></script>
 
 </head>
 <body onload="initialize()">
