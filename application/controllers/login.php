@@ -10,7 +10,6 @@ class Login extends CI_Controller {
 	public function verify_login()
 	{
 		$this->load->model('users','get_user_details');
-		$this->users->my_constructor->('hi');
 	}
 }
 

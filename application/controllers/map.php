@@ -1,13 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Get_location extends CI_Controller {
+class Map extends CI_Controller {
 
 	public function index()
 	{
 		
 		// get the data from the lanes table
 		$this->load->model('Lanes');
-		$lanes_without_lat_lng = $this->Lanes->get_all_lanes_without_lat_lng();
+		$all_lanes = $this->Lanes->get_all_primary_and_secondary_lanes();
 
 		
 		// get the co-ordianted to center the google map from the locations table
@@ -16,13 +16,15 @@ class Get_location extends CI_Controller {
 
 		//create array to send to view
 		$data = array(
-			'title' 					  => 'Get Location',
+			'title' 					  => 'All Lanes',
 			'google_map_center_location'  => $google_map_center_location,
-			'lanes_without_lat_lng' 	  => $lanes_without_lat_lng
+			'all_lanes' 			 	  => $all_lanes
 		);
 
+		//var_dump($data);
+
 		// load the data in the view
-		$this->load->view('get_location',$data); 
+		$this->load->view('all_lanes',$data); 
 	}
 }
 
