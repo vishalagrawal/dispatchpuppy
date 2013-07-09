@@ -112,14 +112,6 @@ class Lanes extends CI_Model {
 
                 // create lane
                 $lane = array(
-                    'bill_to_code'      => $row->bill_to_code,
-                    'bill_to_name'      => $row->bill_to_name,
-                    'bill_to_address'   => $row->bill_to_address,
-                    'bill_to_city'      => $row->bill_to_city,
-                    'bill_to_state'     => $row->bill_to_state,
-                    'bill_to_zipcode'   => $row->bill_to_zipcode,
-                    'bill_to_lat'       => $row->bill_to_lat,
-                    'bill_to_lng'       => $row->bill_to_lng,
                     'shipper_code'      => $row->shipper_code,
                     'shipper_name'      => $row->shipper_name,
                     'shipper_address'   => $row->shipper_address,

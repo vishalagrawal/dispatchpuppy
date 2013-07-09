@@ -1,3 +1,4 @@
+<?php header('Access-Control-Allow-Origin: *'); ?>
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Get_location extends CI_Controller {
@@ -22,7 +23,7 @@ class Get_location extends CI_Controller {
 		);
 
 		// load the data in the view
-		$this->load->view('get_location',$data); 
+		$this->load->view('getLocationCoordinates',$data); 
 	}
 }
 

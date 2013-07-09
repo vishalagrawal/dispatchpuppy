@@ -12,11 +12,6 @@
 	</script>
 
 	<script>
-		var DEFAULT_MARKER_PRIMARY_SHIPPER = '<?php echo asset_url();?>images/google-icons/green/measle-green.png';
-		var DEFAULT_MARKER_PRIMARY_CONSIGNEE = '<?php echo asset_url();?>images/google-icons/red/measle-red.png';
-		var DEFAULT_MARKER_SECONDARY_SHIPPER = '<?php echo asset_url();?>images/google-icons/measle-green-black-white.png';
-		var DEFAULT_MARKER_SECONDARY_CONSIGNEE = '<?php echo asset_url();?>images/google-icons/measle-red-black-white.png';
-
 		/* variable to store center location of map when initialized */
 		var center_location = new google.maps.LatLng(<?php echo $google_map_center_location['location_lat'];?>, <?php echo $google_map_center_location['location_lng'];?>);
 
@@ -24,101 +19,63 @@
 		var all_lanes = <?php echo json_encode($all_lanes);?>;
 	</script>
 
-	<!--Javascript file to display map-->
 	<script type="text/javascript" src="<?php echo asset_url();?>js/map.js"></script>
-</head>
 
+</head>
 <body onload="initialize()">
 	<div id="map-canvas"></div>
 	<div id="control-panel">
-		<div id="all-lanes">
+		<div class="all-lanes">
 			<?php
-				$SHIPPER_IMAGE = '-SHIPPER-IMAGE';
-				$CONSIGNEE_IMAGE = '-CONSIGNEE-IMAGE';
+				$checkbox = '-CHECKBOX';
 				foreach($all_lanes as $lane_id => $lane)
 				{
-					echo '<div class="primary-lane-info" id="'.$lane_id.'" onclick="getLaneLocation(\''.$lane_id.'\')">'
-							.'<div class="shipper-consignee-info">'
-								.'<div class="shipper">'
-									.'<div class="marker">'
-										.'<img id="'.$lane_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/green/measle-green.png">'
-									.'</div>'
-									.'<div class="shipper-info">'
-										.'<div class="shipper-name">'
-											.$lane['shipper_name']
-										.'</div>'
-										.'<div class="shipper-address">'
-											.$lane['shipper_city'].', '.$lane['shipper_state']
-										.'</div>'
-									.'</div>'
+					echo '<div class="lane-info" id="'.$lane_id.'">'
+								.'<div class="left-checkbox">'
+									.'<input type="checkbox" id="'.$lane_id.$checkbox.'" onclick="getLaneLocation(\''.$lane_id.'\')">'
 								.'</div>'
-								.'<div class="consignee">'
-									.'<div class="marker">'
-										.'<img id="'.$lane_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/red/measle-red.png">'
+								.'<div class="right-text">'
+									.'<div class="primary-shipper">'
+										.$lane['shipper_name'].' - '.$lane['shipper_city'].', '.$lane['shipper_state']
 									.'</div>'
-									.'<div class="consignee-info">'
-										.'<div class="consignee-name">'
-											.$lane['consignee_name']
-										.'</div>'
-										.'<div class="consignee-address">'
-											.$lane['consignee_city'].', '.$lane['consignee_state']
-										.'</div>'
+									.'<div class="primary-consignee">'
+										.$lane['consignee_name'].' - '.$lane['consignee_city'].', '.$lane['consignee_state']
 									.'</div>'
-								.'</div>'
-							.'</div>'
-							.'<div class="commodity-miles-info">'
-								.'<div class="commodity-code">'
-									.$lane['commodity_code']
-								.'</div>'
-								.'<div class="miles">'
-									.round($lane['miles'],1).' mi'
-								.'</div>'
-							.'</div>'
-						.'</div>';
-
-						if($lane['secondary_lanes'] != null)
-						foreach($lane['secondary_lanes'] as $sub_lane_id => $sub_lane)
-						{
-							echo '<div class="primary-lane-info sub-lane-info" id="'.$lane_id.'-'.$sub_lane_id.'" onclick="getSubLaneLocation(\''.$lane_id.'\',\''.$sub_lane_id.'\')">'
-									.'<div class="shipper-consignee-info">'
-										.'<div class="shipper">'
-											.'<div class="marker">'
-												.'<img id="'.$lane_id.'-'.$sub_lane_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/measle-green-black-white.png">'
-											.'</div>'
-											.'<div class="shipper-info">'
-												.'<div class="shipper-name">'
-													.$sub_lane['shipper_name']
-												.'</div>'
-												.'<div class="shipper-address">'
-													.$sub_lane['shipper_city'].', '.$sub_lane['shipper_state']
-												.'</div>'
-											.'</div>'
-										.'</div>'
-										.'<div class="consignee">'
-											.'<div class="marker">'
-												.'<img id="'.$lane_id.'-'.$sub_lane_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/measle-red-black-white.png">'
-											.'</div>'
-											.'<div class="consignee-info">'
-												.'<div class="consignee-name">'
-													.$sub_lane['consignee_name']
-												.'</div>'
-												.'<div class="consignee-address">'
-													.$sub_lane['consignee_city'].', '.$sub_lane['consignee_state']
-												.'</div>'
-											.'</div>'
-										.'</div>'
+									.'<div class="primary-commodity-info">'
+										.$lane['commodity'].' ('.$lane['commodity_code'].')'
 									.'</div>'
-									.'<div class="commodity-miles-info">'
-										.'<div class="commodity-code">'
-											.$sub_lane['commodity_code']
-										.'</div>'
-										.'<div class="miles">'
-											.round($sub_lane['miles'],1).' mi'
-										.'</div>'
-									.'</div>'
-								.'</div>';
-					}
+									.'<div class="primary-miles">'
+										.round($lane['miles'],1).' mi'
+									.'</div>';
+									
+									if($lane['secondary_lanes'] != null)
+									foreach($lane['secondary_lanes'] as $sub_lane_id => $sub_lane)
+									{
+										echo '<div class="sub-lane-info" id="'.$lane_id.'-'.$sub_lane_id.'">'
+												.'<div class="left-checkbox">'
+													.'<input type="checkbox" id="'.$lane_id.'-'.$sub_lane_id.$checkbox.'" onclick="getSubLaneLocation(\''.$lane_id.'\',\''.$sub_lane_id.'\')">'
+												.'</div>'
+												.'<div class="right-text secondary-right-text">'
+													.'<div class="secondary-shipper">'
+														.$sub_lane['shipper_name'].' - '.$sub_lane['shipper_city'].', '.$sub_lane['shipper_state']
+													.'</div>'
+													.'<div class="secondary-consignee">'
+														.$sub_lane['consignee_name'].' - '.$sub_lane['consignee_city'].', '.$sub_lane['consignee_state']
+													.'</div>'
+													.'<div class="secondary-commodity-info">'
+														.$sub_lane['commodity'].' ('.$sub_lane['commodity_code'].')'
+													.'</div>'
+													.'<div class="secondary-miles">'
+														.round($sub_lane['miles'],1).' mi'
+													.'</div>'
+												.'</div>'
+											.'</div>';
+									}
+									
+							echo '</div>'
+						.'</div>';	
 				}
+			
 			?>
 		</div>
 	</div>

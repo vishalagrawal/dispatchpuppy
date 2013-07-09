@@ -105,6 +105,9 @@ html, body {
     width: 61.8%; /*golden ration percentage*/
     height:100%;
     float: left;
+    -moz-box-shadow: 0 0 10px #888;
+    -webkit-box-shadow: 0 0 10px#888;
+    box-shadow: 0 0 10px #888;
     display: inline-block;
     position: absolute;
 }
@@ -117,88 +120,78 @@ html, body {
     overflow-y: scroll;
 }
 
-#all-lanes {
-    height: 100%;
-}
-
-div.primary-lane-info {
+div.all-lanes {
+    padding: 0 5% 0 5%;
+    height: 95%;
     color: #8E8E93;
-    font-size: 0.9em;
-    overflow: auto;
+}
+
+div.lane-info {
+    padding-top: 5%;
+    clear: both;
+}
+
+div.left-checkbox { 
+    width: 8%;  
+    float: left;
     position: relative;
-    padding: 2.5%;
-    cursor: hand; 
-    cursor: pointer;
-    border-top: 0.1em solid #8E8E93;
 }
 
-div.primary-lane-info:hover {
-    background-color: #8E8E93;
-    color: #D1D1D3; /* only color not from iOS7 or mail chimp */
+div.right-text {
+    width: 92%;
+    float: right;
+    position: relative; 
 }
 
-div.primary-lane-info:hover div.shipper-name, 
-div.primary-lane-info:hover div.consignee-name {
-    color: #FFFFFF;
+div.primary-commodity-info, div.primary-miles {
+    font-size: 0.9em;
 }
 
-/* sub lane */
+div.active-lane .primary-shipper {
+    color: #4CD964;
+}
+
+div.active-lane .primary-consignee {
+    color: #FF2D55;
+}
+
+div.active-lane .primary-commodity-info, div.active-lane .primary-miles {
+    color: #373737;
+}
+
 div.sub-lane-info {
+    padding: 2% 2% 0 0;
+    clear: both;
+    visibility: hidden;
+    position: absolute;
+}
+
+div.secondary-shipper { 
+    font-size: 0.9em;
+}
+
+div.secondary-consignee {
+    font-size: 0.9em;
+}
+
+div.secondary-commodity-info, div.secondary-miles {
     font-size: 0.8em;
-    padding-left: 10%;
-    border-top: 0.1em dashed #8E8E93;
-    display: none;
 }
 
-/* left column */
-div.shipper-consignee-info { 
-    width: 80%; 
-    float: left;
+div.secondary-miles {
+    padding-bottom: 2%;
 }
 
-div.shipper {
-    width: 50%; 
-    float: left;
-    position: relative;
+div.active-sub-lane .secondary-shipper {
+    color: #4CD964;
 }
 
-div.consignee {
-    width: 50%; 
-    float: right;
-    position: relative;
+div.active-sub-lane .secondary-consignee {
+    color: #FF2D55;
 }
 
-div.marker {
-    width: 17.5%;
-    float: left;
-    position: relative;
-    text-align: center;
-}
-
-div.shipper-info, div.consignee-info {
-    width: 82.5%;
-    float: right;
-    position: relative;
-}
-
-div.shipper-name, div.consignee-name {
-    color: #000000;
-}
-
-div.shipper-address, div.consignee-address {
-    font-size: 0.9em;
-}
-
-/* right column */
-div.commodity-miles-info {
-    width: 20%;
-    float: right;
-    position: relative;
-    text-align: right;
-}
-
-div.miles {
-    font-size: 0.9em;
+div.active-sub-lane .secondary-commodity-info, div.active-sub-lane .secondary-miles {
+    color: #5D5C5D;
 }
 
 /* ==========================================================================
