@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Map extends CI_Controller {
+class Map_combinations extends CI_Controller {
 
 	public function index()
 	{
@@ -24,7 +24,7 @@ class Map extends CI_Controller {
 		//var_dump($data);
 
 		// load the data in the view
-		$this->load->view('all_lanes',$data); 
+		$this->load->view('all_combinations',$data); 
 	}
 }
 
