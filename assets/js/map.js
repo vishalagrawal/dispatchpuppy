@@ -520,3 +520,100 @@ function drawPath(path, path_style_info, lane_id)
 	poly_lines[lane_id] = myLine;
 }
 
+/*
+ *
+ * view - get_location
+ *
+ */
+
+var geocoder;
+
+// also in model for lanes
+var BILL_TO_CUSTOMER = 'BILL_TO';
+var SHIPPER_CUSTOMER = 'SHIPPER';
+var CONSIGNEE_CUSTOMER = 'CONSIGNEE';
+
+var SHIPPER_LAT = '-SHIPPER-LAT';
+var SHIPPER_LNG = '-SHIPPER-LNG';
+var SHIPPER_STATUS = '-SHIPPER-STATUS';
+
+var CONSIGNEE_LAT = '-CONSIGNEE-LAT';
+var CONSIGNEE_LNG = '-CONSIGNEE-LNG';
+var CONSIGNEE_STATUS = '-CONSIGNEE-STATUS';
+
+var UPDATE_STATUS = '-LANE-STATUS';
+
+function getLatLng(lane_id)
+{
+	var bill_to_address = all_lanes[lane_id].bill_to_address + ',' + all_lanes[lane_id].bill_to_city + ',' + all_lanes[lane_id].bill_to_state + ',' + all_lanes[lane_id].bill_to_zipcode;
+
+	updateAddress(bill_to_address, lane_id, BILL_TO_CUSTOMER);
+
+	var shipper_address = all_lanes[lane_id].shipper_address + ',' + all_lanes[lane_id].shipper_city + ',' + all_lanes[lane_id].shipper_state + ',' + all_lanes[lane_id].shipper_zipcode;	
+
+	updateAddress(shipper_address, lane_id, SHIPPER_CUSTOMER);
+
+	var consignee_address = all_lanes[lane_id].consignee_address + ',' + all_lanes[lane_id].consignee_city + ',' + all_lanes[lane_id].consignee_state + ',' + all_lanes[lane_id].consignee_zipcode;	
+
+	updateAddress(consignee_address, lane_id, CONSIGNEE_CUSTOMER);
+}
+
+function updateAddress(address, lane_id, customer_type)
+{
+	geocoder = new google.maps.Geocoder();
+
+	geocoder.geocode( { 'address': address}, function(results, status) {
+	    if (status == google.maps.GeocoderStatus.OK) 
+	    {
+	        var lat = results[0].geometry.location.lat();
+	        var lng = results[0].geometry.location.lng();
+
+	        if(customer_type === SHIPPER_CUSTOMER)
+	        {
+	        	document.getElementById(lane_id+SHIPPER_LAT).innerHTML = lat;
+	        	document.getElementById(lane_id+SHIPPER_LNG).innerHTML = lng;
+	        }
+	        else if(customer_type === CONSIGNEE_CUSTOMER)
+	        {
+	        	document.getElementById(lane_id+CONSIGNEE_LAT).innerHTML = lat;
+	        	document.getElementById(lane_id+CONSIGNEE_LNG).innerHTML = lng;
+	        }
+	        updateRecord(lane_id, customer_type, lat, lng);
+	    }
+	    else 
+	    {
+	    	alert("Geocode was not successful for the following reason: " + status);
+	    }
+    });
+}
+
+function updateRecord(lane_id, customer_type, lat, lng)
+{
+	var xmlhttp;
+
+	if (window.XMLHttpRequest)
+  	{// code for IE7+, Firefox, Chrome, Opera, Safari
+  		xmlhttp=new XMLHttpRequest();
+  	}
+	else
+  	{// code for IE6, IE5
+  		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  	}
+	
+	xmlhttp.onreadystatechange=function()
+  	{
+  		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    	{
+    		if(customer_type === SHIPPER_CUSTOMER)
+    		{
+    			document.getElementById(lane_id+SHIPPER_STATUS).innerHTML=xmlhttp.responseText;
+    		}
+    		else if(customer_type === CONSIGNEE_CUSTOMER)
+	        {
+	        	document.getElementById(lane_id+CONSIGNEE_STATUS).innerHTML=xmlhttp.responseText;
+	        }
+    	}
+  	}
+	xmlhttp.open("GET","add_lat_lng/update_lat_lng/"+lane_id+"/"+customer_type+"/"+lat+"/"+lng,true);
+	xmlhttp.send();
+}

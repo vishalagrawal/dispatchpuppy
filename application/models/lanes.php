@@ -147,6 +147,53 @@ class Lanes extends CI_Model {
         }
         return $lanes_without_lat_lng;
     }
+
+    function update_lat_lng($data)
+    {
+        $BILL_TO_CUSTOMER = 'BILL_TO';
+        $SHIPPER_CUSTOMER = 'SHIPPER';
+        $CONSIGNEE_CUSTOMER = 'CONSIGNEE';
+
+        if($data['customer_type'] === $BILL_TO_CUSTOMER)
+        {
+            $lat = 'bill_to_lat';
+            $lng = 'bill_to_lng';
+            $lat_lng = array(
+                'bill_to_lat' => $data['lat'],   
+                'bill_to_lng' => $data['lng']  
+            );
+            $return_value = 'updated bill_to';
+        }
+        else if($data['customer_type'] === $SHIPPER_CUSTOMER)
+        {
+            $lat = 'shipper_lat';
+            $lng = 'shipper_lng';
+            $lat_lng = array(
+                'shipper_lat' => $data['lat'],   
+                'shipper_lng' => $data['lng']   
+            );
+            $return_value = 'updated shipper';
+        }
+        else if($data['customer_type'] === $CONSIGNEE_CUSTOMER)
+        {
+            $lat = 'consignee_lat';
+            $lng = 'consignee_lng';
+            $lat_lng = array(
+                'consignee_lat' => $data['lat'],   
+                'consignee_lng' => $data['lng']   
+            );
+            $return_value = 'updated consignee';
+        }
+
+        $this->db->where('shipper_code',$data['shipper_code']);
+        $this->db->where('consignee_code', $data['consignee_code']);
+        $this->db->where('commodity_code', $data['commodity_code']);
+        $this->db->where($lat, 0);
+        $this->db->where($lng, 0);
+        $this->db->update('lanes', $lat_lng);
+
+        return $return_value;
+    }
 }
 
 /* End of file lanes.php */

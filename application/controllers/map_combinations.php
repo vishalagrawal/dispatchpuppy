@@ -28,5 +28,5 @@ class Map_combinations extends CI_Controller {
 	}
 }
 
-/* End of file lanes.php */
-/* Location: ./application/controllers/lanes.php */
+/* End of file map_combinations.php */
+/* Location: ./application/controllers/map_combinations.php */

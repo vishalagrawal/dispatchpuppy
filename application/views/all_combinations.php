@@ -35,9 +35,18 @@
 			<?php
 				$SHIPPER_IMAGE = '-SHIPPER-IMAGE';
 				$CONSIGNEE_IMAGE = '-CONSIGNEE-IMAGE';
+				$i = 0;
 				foreach($all_lanes as $lane_id => $lane)
 				{
-					echo '<div class="primary-lane-info" id="'.$lane_id.'" onclick="getLaneLocation(\''.$lane_id.'\')">'
+					if($i==0)
+					{
+						$first_lane = 'first-lane';
+					}
+					else
+					{
+						$first_lane = '';
+					}
+					echo '<div class="primary-lane-info'.' '.$first_lane.'" id="'.$lane_id.'" onclick="getLaneLocation(\''.$lane_id.'\')">'
 							.'<div class="shipper-consignee-info">'
 								.'<div class="shipper">'
 									.'<div class="marker">'
@@ -118,6 +127,7 @@
 									.'</div>'
 								.'</div>';
 					}
+					$i++;
 				}
 			?>
 		</div>

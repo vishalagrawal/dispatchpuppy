@@ -132,6 +132,14 @@ div.primary-lane-info {
     border-top: 0.1em solid #8E8E93;
 }
 
+div.first-lane {
+    border-top: none;
+}
+
+div.primary-lane-info :first-child {
+    border-top: none;
+}
+
 div.primary-lane-info:hover {
     background-color: #8E8E93;
     color: #D1D1D3; /* only color not from iOS7 or mail chimp */
@@ -199,6 +207,10 @@ div.commodity-miles-info {
 
 div.miles {
     font-size: 0.9em;
+}
+
+div.status {
+    color: #FF3B30;
 }
 
 /* ==========================================================================
