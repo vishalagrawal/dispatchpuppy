@@ -160,8 +160,11 @@ function getLaneLocation(lane_id)
 		delete all_marker[lane_id+SHIPPER];
 
 		// remove the path from primary shipper to consignee
-		poly_lines[lane_id].setMap(null);
-		delete poly_lines[lane_id];
+		if(typeof(poly_lines[lane_id]) != 'undefined')
+		{
+			poly_lines[lane_id].setMap(null);
+			delete poly_lines[lane_id];
+		}
 	
 		// remove the markers for primary consignee
 		all_marker[lane_id+CONSIGNEE].setMap(null);
@@ -177,8 +180,11 @@ function getLaneLocation(lane_id)
 				if(document.getElementById(sub_lane_div_id).className.split(' ').indexOf('active-lane') > 0)
 				{
 					// remove the poly line from primary consignee to secondary shipper
-					poly_lines[sub_lane_div_id+EMPTY].setMap(null);
-					delete poly_lines[sub_lane_div_id+EMPTY];
+					if(typeof(poly_lines[sub_lane_div_id+EMPTY]) != 'undefined')
+					{
+						poly_lines[sub_lane_div_id+EMPTY].setMap(null);
+						delete poly_lines[sub_lane_div_id+EMPTY];
+					}
 					
 					// remove the marker for secondary shipper
 					all_marker[sub_lane_div_id+SHIPPER].setMap(null);
@@ -186,8 +192,11 @@ function getLaneLocation(lane_id)
 					delete all_marker[sub_lane_div_id+SHIPPER];
 
 					// remove the poly line from secondary shipper to secondary consignee 
-					poly_lines[sub_lane_div_id].setMap(null);
-					delete poly_lines[sub_lane_div_id];
+					if(typeof(poly_lines[sub_lane_div_id]) != 'undefined')
+					{
+						poly_lines[sub_lane_div_id].setMap(null);
+						delete poly_lines[sub_lane_div_id];
+					}
 
 					// remove the marker for secondary consignee
 					all_marker[sub_lane_div_id+CONSIGNEE].setMap(null);
@@ -203,8 +212,11 @@ function getLaneLocation(lane_id)
 		else
 		{
 			// remove the empty run
-			poly_lines[lane_id+EMPTY].setMap(null);
-			delete poly_lines[lane_id+EMPTY];
+			if(typeof(poly_lines[lane_id+EMPTY]) != 'undefined')
+			{
+				poly_lines[lane_id+EMPTY].setMap(null);
+				delete poly_lines[lane_id+EMPTY];
+			}
 		}
 		
 		// delete the laneMarkerID
@@ -325,8 +337,11 @@ function getSubLaneLocation(lane_id, sub_lane_id)
 	else
 	{
 		// remove the poly line from primary consignee to secondary shipper
-		poly_lines[sub_lane_div_id+EMPTY].setMap(null);
-		delete poly_lines[sub_lane_div_id+EMPTY];
+		if(typeof(poly_lines[sub_lane_div_id+EMPTY]) != 'undefined')
+		{
+			poly_lines[sub_lane_div_id+EMPTY].setMap(null);
+			delete poly_lines[sub_lane_div_id+EMPTY];
+		}
 					
 		// remove the marker for secondary shipper
 		all_marker[sub_lane_div_id+SHIPPER].setMap(null);
@@ -334,9 +349,12 @@ function getSubLaneLocation(lane_id, sub_lane_id)
 		delete all_marker[sub_lane_div_id+SHIPPER];
 
 		// remove the poly line from secondary shipper to secondary consignee 
-		poly_lines[sub_lane_div_id].setMap(null);
-		delete poly_lines[sub_lane_div_id];
-
+		if(typeof(poly_lines[sub_lane_div_id]) != 'undefined')
+		{
+			poly_lines[sub_lane_div_id].setMap(null);
+			delete poly_lines[sub_lane_div_id];
+		}
+		
 		// remove the marker for secondary consignee
 		all_marker[sub_lane_div_id+CONSIGNEE].setMap(null);
 		document.getElementById(sub_lane_div_id+CONSIGNEE_IMAGE).src = DEFAULT_MARKER_SECONDARY_CONSIGNEE;
