@@ -27,14 +27,14 @@ class Add_lat_lng extends CI_Controller {
 
 	public function update_lat_lng($lane_id, $customer_type, $lat, $lng)
 	{
-		
-		$info = explode('-',$lane_id);
+		$info = explode('-',$lane_id,3);
+		$commodity_code = urldecode($info[2]);
 
 		$data = array(
 			'customer_type'	 => $customer_type,
 			'shipper_code'   => $info[0],
 			'consignee_code' => $info[1],
-			'commodity_code' => str_replace('%20', ' ', $info[2]),
+			'commodity_code' => $commodity_code,
 			'lat' 			 => $lat,
 			'lng'			 => $lng
 		);
