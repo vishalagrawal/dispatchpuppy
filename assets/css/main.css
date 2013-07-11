@@ -141,13 +141,7 @@ div.primary-lane-info :first-child {
 }
 
 div.primary-lane-info:hover {
-    background-color: #8E8E93;
-    color: #D1D1D3; /* only color not from iOS7 or mail chimp */
-}
-
-div.primary-lane-info:hover div.shipper-name, 
-div.primary-lane-info:hover div.consignee-name {
-    color: #FFFFFF;
+    background-color: #F2F2F2;
 }
 
 /* sub lane */
@@ -198,15 +192,28 @@ div.shipper-address, div.consignee-address {
 }
 
 /* right column */
-div.commodity-miles-info {
+div.frequency-commodity-miles-info {
     width: 20%;
     float: right;
     position: relative;
     text-align: right;
 }
 
-div.miles {
+div.frequency {
+    color: #000000;
+}
+
+div.frequency span {
+    color: #8E8E93;
+    font-size: 0.8em;
+}
+
+div.commodity-miles {
     font-size: 0.9em;
+}
+
+div.commodity-miles span {
+    color: #FF3B30;
 }
 
 div.status {

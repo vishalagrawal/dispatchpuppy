@@ -12,6 +12,8 @@ var EMPTY = '-EMPTY';
 var PRIMARY_LANE_MARKER_FONT_SIZE = 16;
 var SECONDARY_LANE_MARKER_FONT_SIZE = 14;
 
+var DIV = '-DIV';
+
 var map;
 var markerBounds = new google.maps.LatLngBounds();
 var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -171,7 +173,6 @@ function getLaneLocation(lane_id)
 		document.getElementById(lane_id+CONSIGNEE_IMAGE).src = DEFAULT_MARKER_PRIMARY_CONSIGNEE;
 		delete all_marker[lane_id+CONSIGNEE];
 
-		
 		if(lane.secondary_lanes != null)
 		{
 			for(var sub_lane_id in lane.secondary_lanes)
@@ -203,6 +204,9 @@ function getLaneLocation(lane_id)
 					document.getElementById(sub_lane_div_id+CONSIGNEE_IMAGE).src = DEFAULT_MARKER_SECONDARY_CONSIGNEE;
 					delete all_marker[sub_lane_div_id+CONSIGNEE];	
 				}
+
+				document.getElementById(sub_lane_div_id+EMPTY+DIV).innerHTML = '';
+
 				document.getElementById(sub_lane_div_id).className = document.getElementById(sub_lane_div_id).className.replace( /(?:^|\s)active-lane(?!\S)/g , '' );
 
 				// hide the sub-lane div 
@@ -217,6 +221,8 @@ function getLaneLocation(lane_id)
 				poly_lines[lane_id+EMPTY].setMap(null);
 				delete poly_lines[lane_id+EMPTY];
 			}
+
+			document.getElementById(lane_id+EMPTY+DIV).innerHTML = '';
 		}
 		
 		// delete the laneMarkerID
@@ -318,7 +324,7 @@ function getSubLaneLocation(lane_id, sub_lane_id)
 		//drawPath([consignee_primary_location, shipper_secondary_location], EMPTY_MILES, sub_lane_div_id+EMPTY);
 
 		//map directions from primary consignee to secondary shipper
-		calcRoute(consignee_primary_location, shipper_secondary_location,EMPTY_MILES, sub_lane_div_id+EMPTY);
+		calcRoute(consignee_primary_location, shipper_secondary_location, EMPTY_MILES, sub_lane_div_id+EMPTY);
 
 		// add marker for secondary consignee
 		var consignee_secondary_location = new google.maps.LatLng(sub_lane.consignee_lat, sub_lane.consignee_lng);
@@ -360,8 +366,13 @@ function getSubLaneLocation(lane_id, sub_lane_id)
 		document.getElementById(sub_lane_div_id+CONSIGNEE_IMAGE).src = DEFAULT_MARKER_SECONDARY_CONSIGNEE;
 		delete all_marker[sub_lane_div_id+CONSIGNEE];
 
-		deleteSubLaneMarkerID(lane_id, sub_lane_id)
+		// remove the maker_id from the array and the object
+		deleteSubLaneMarkerID(lane_id, sub_lane_id);
 
+		// remove the empty miles
+		document.getElementById(sub_lane_div_id+EMPTY+DIV).innerHTML = '';
+
+		// remove active-lane class
 		document.getElementById(sub_lane_div_id).className = document.getElementById(sub_lane_div_id).className.replace( /(?:^|\s)active-lane(?!\S)/g , '' );
 	}
 }
@@ -503,6 +514,11 @@ function calcRoute(origin, destination, path_style_info, lane_id)
 
   			allLatLong = result.routes[0].overview_path;
   			drawPath(allLatLong, path_style_info, lane_id);
+  			if(lane_id.indexOf(EMPTY) > 0)
+  			{
+  				var distance = result.routes[0].legs[0].distance.text;
+  				document.getElementById(lane_id+DIV).innerHTML = distance + '<b style="color:#8E8E93;"> &middot; </b>';
+  			}
   		}
   	});
 }

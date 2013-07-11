@@ -35,6 +35,8 @@
 			<?php
 				$SHIPPER_IMAGE = '-SHIPPER-IMAGE';
 				$CONSIGNEE_IMAGE = '-CONSIGNEE-IMAGE';
+				$WEEKS = 20;
+				$EMPTY_DIV = '-EMPTY-DIV';
 				$i = 0;
 				foreach($all_lanes as $lane_id => $lane)
 				{
@@ -75,12 +77,12 @@
 									.'</div>'
 								.'</div>'
 							.'</div>'
-							.'<div class="commodity-miles-info">'
-								.'<div class="commodity-code">'
-									.$lane['commodity_code']
+							.'<div class="frequency-commodity-miles-info">'
+								.'<div class="frequency">'
+									.ceil($lane['number_of_loads']/$WEEKS).' <span>per week</span>'
 								.'</div>'
-								.'<div class="miles">'
-									.round($lane['miles'],1).' mi'
+								.'<div class="commodity-miles">'
+									.'<span id="'.$lane_id.$EMPTY_DIV.'"></span>'.$lane['commodity_code'].' <b>&middot;</b> '.round($lane['miles'],1).' mi'
 								.'</div>'
 							.'</div>'
 						.'</div>';
@@ -117,12 +119,12 @@
 											.'</div>'
 										.'</div>'
 									.'</div>'
-									.'<div class="commodity-miles-info">'
-										.'<div class="commodity-code">'
-											.$sub_lane['commodity_code']
+									.'<div class="frequency-commodity-miles-info">'
+										.'<div class="frequency">'
+											.ceil($sub_lane['number_of_loads']/$WEEKS).' <span>per week</span>'
 										.'</div>'
-										.'<div class="miles">'
-											.round($sub_lane['miles'],1).' mi'
+										.'<div class="commodity-miles">'
+											.'<span id="'.$lane_id.'-'.$sub_lane_id.$EMPTY_DIV.'"></span>'.$sub_lane['commodity_code'].' <b>&middot;</b> '.round($sub_lane['miles']).' mi'
 										.'</div>'
 									.'</div>'
 								.'</div>';
