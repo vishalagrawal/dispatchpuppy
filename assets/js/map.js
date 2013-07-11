@@ -568,16 +568,6 @@ function updateAddress(address, lane_id, customer_type)
 	        var lat = results[0].geometry.location.lat();
 	        var lng = results[0].geometry.location.lng();
 
-	        if(customer_type === SHIPPER_CUSTOMER)
-	        {
-	        	document.getElementById(lane_id+SHIPPER_LAT).innerHTML = lat;
-	        	document.getElementById(lane_id+SHIPPER_LNG).innerHTML = lng;
-	        }
-	        else if(customer_type === CONSIGNEE_CUSTOMER)
-	        {
-	        	document.getElementById(lane_id+CONSIGNEE_LAT).innerHTML = lat;
-	        	document.getElementById(lane_id+CONSIGNEE_LNG).innerHTML = lng;
-	        }
 	        updateRecord(lane_id, customer_type, lat, lng);
 	    }
 	    else 
@@ -606,14 +596,18 @@ function updateRecord(lane_id, customer_type, lat, lng)
     	{
     		if(customer_type === SHIPPER_CUSTOMER)
     		{
+    			document.getElementById(lane_id+SHIPPER_LAT).innerHTML = lat;
+	        	document.getElementById(lane_id+SHIPPER_LNG).innerHTML = lng;
     			document.getElementById(lane_id+SHIPPER_STATUS).innerHTML=xmlhttp.responseText;
     		}
     		else if(customer_type === CONSIGNEE_CUSTOMER)
 	        {
+	        	document.getElementById(lane_id+CONSIGNEE_LAT).innerHTML = lat;
+	        	document.getElementById(lane_id+CONSIGNEE_LNG).innerHTML = lng;
 	        	document.getElementById(lane_id+CONSIGNEE_STATUS).innerHTML=xmlhttp.responseText;
 	        }
     	}
   	}
-	xmlhttp.open("GET","add_lat_lng/update_lat_lng/"+lane_id+"/"+customer_type+"/"+lat+"/"+lng,true);
+	xmlhttp.open("GET","add_lat_lng/update_lat_lng/"+escape(lane_id)+"/"+customer_type+"/"+lat+"/"+lng,true);
 	xmlhttp.send();
 }
