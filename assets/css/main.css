@@ -129,7 +129,7 @@ div.primary-lane-info {
     padding: 2.5%;
     cursor: hand; 
     cursor: pointer;
-    border-top: 0.1em solid #8E8E93;
+    border-top: 0.1em dotted #8E8E93;
 }
 
 div.first-lane {
@@ -141,7 +141,7 @@ div.primary-lane-info :first-child {
 }
 
 div.primary-lane-info:hover {
-    background-color: #F2F2F2;
+    background-color: #F2F2F2; /* mail chimp brand asset color */
 }
 
 /* sub lane */

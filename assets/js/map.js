@@ -1,7 +1,7 @@
 // global variables
 var ALPHA = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-var LOADED_MILES = ['#8E8E93', 1, 3.5];
-var EMPTY_MILES = ['#FF3B30', 0.75, 3.5];
+var LOADED_MILES = ['#8E8E93', 0.7, 6];
+var EMPTY_MILES = ['#FF3B30', 0.85, 2.5];
 var MY_MAPTYPE_ID = 'JPD';
 var CHECKBOX = '-CHECKBOX';
 var SHIPPER = '-SHIPPER';
