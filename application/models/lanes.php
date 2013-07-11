@@ -12,7 +12,8 @@ class Lanes extends CI_Model {
     {
         // get all the primary_lanes from the database
         $this->db->where('primary_account',0);
-        $this->db->order_by('shipper_name asc, consignee_name asc, commodity asc');
+        $this->db->order_by('number_of_loads desc');
+        //$this->db->order_by('shipper_name asc, consignee_name asc, commodity asc');
         $primary_lanes = $this->db->get('lanes');
         
         $all_lanes = array();
@@ -51,7 +52,8 @@ class Lanes extends CI_Model {
                 
                 // get all the secondary_lanes for that primary_lane
                 $this->db->where('primary_account',$lane['consignee_code']);
-                $this->db->order_by('shipper_name asc, consignee_name asc, commodity asc');
+                $this->db->order_by('number_of_loads desc');
+                //$this->db->order_by('shipper_name asc, consignee_name asc, commodity asc');
                 $secondary_lanes = $this->db->get('lanes');
                 
                 if($secondary_lanes->num_rows() > 0)
