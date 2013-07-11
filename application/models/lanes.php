@@ -190,9 +190,15 @@ class Lanes extends CI_Model {
         $this->db->where('commodity_code', $data['commodity_code']);
         $this->db->where($lat, 0);
         $this->db->where($lng, 0);
-        $this->db->update('lanes', $lat_lng);
-
-        return $return_value;
+        
+        if($this->db->update('lanes', $lat_lng) > 0)
+        {
+            return $return_value;
+        }
+        else
+        {
+            return 'failed';
+        }
     }
 }
 
