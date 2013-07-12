@@ -121,7 +121,7 @@
 									.'</div>'
 									.'<div class="frequency-commodity-miles-info">'
 										.'<div class="frequency">'
-											.ceil($sub_lane['number_of_loads']/$WEEKS).' <span>per week</span>'
+											.$sub_lane['number_of_loads'].' <span>per week</span>'
 										.'</div>'
 										.'<div class="commodity-miles">'
 											.'<span id="'.$lane_id.'-'.$sub_lane_id.$EMPTY_DIV.'"></span>'.$sub_lane['commodity_code'].' <b>&middot;</b> '.round($sub_lane['miles']).' mi'

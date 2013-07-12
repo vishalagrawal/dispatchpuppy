@@ -2,3 +2,6 @@
 ∞ differentiating primary run from secondary run
 ∞ the opacity and thickness of loaded and empty miles
 ∞ design logo for dispatch puppy
+∞ show commodity information on click
+∞ adding a run directly to the database (create a view for this)
+∞ creating a seperate database for customer info

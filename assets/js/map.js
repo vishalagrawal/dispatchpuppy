@@ -1,7 +1,7 @@
 // global variables
 var ALPHA = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-var LOADED_MILES = ['#8E8E93', 0.7, 6];
-var EMPTY_MILES = ['#FF3B30', 0.85, 2.5];
+var LOADED_MILES = ['#000000', 0.25, 6];
+var EMPTY_MILES = ['#FF3B30', 1, 2];
 var MY_MAPTYPE_ID = 'JPD';
 var CHECKBOX = '-CHECKBOX';
 var SHIPPER = '-SHIPPER';
@@ -531,6 +531,7 @@ function drawPath(path, path_style_info, lane_id)
 		strokeColor: path_style_info[0],
 		strokeOpacity: path_style_info[1],
 		strokeWeight: path_style_info[2]
+		//zIndex: path_style_info[3]
 	});
 
 	poly_lines[lane_id] = myLine;
@@ -624,6 +625,6 @@ function updateRecord(lane_id, customer_type, lat, lng)
 	        }
     	}
   	}
-	xmlhttp.open("GET","add_lat_lng/update_lat_lng/"+escape(lane_id)+"/"+customer_type+"/"+lat+"/"+lng,true);
+	xmlhttp.open("GET","add_lat_lng/update_lat_lng/"+lane_id+"/"+customer_type+"/"+lat+"/"+lng,true);
 	xmlhttp.send();
 }

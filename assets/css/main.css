@@ -129,7 +129,7 @@ div.primary-lane-info {
     padding: 2.5%;
     cursor: hand; 
     cursor: pointer;
-    border-top: 0.1em dotted #8E8E93;
+    border-top: 0.2em dotted #8E8E93;
 }
 
 div.first-lane {
@@ -175,6 +175,11 @@ div.marker {
     float: left;
     position: relative;
     text-align: center;
+}
+
+div.marker img{
+    max-width:100% !important;
+    height:auto;
 }
 
 div.shipper-info, div.consignee-info {
