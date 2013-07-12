@@ -1,2 +1,4 @@
 ∞ overlaying icons (add icon on top to the lanes in control pannel)
 ∞ differentiating primary run from secondary run
+∞ the opacity and thickness of loaded and empty miles
+∞ design logo for dispatch puppy
