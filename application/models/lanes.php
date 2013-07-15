@@ -116,7 +116,11 @@ class Lanes extends CI_Model {
         $this->db->select('*');
         $this->db->from('lanes');
         $this->db->where('bill_to_lat',0);
-        $this->db->where('bill_to_lng',0);
+        $this->db->or_where('bill_to_lng',0);
+        $this->db->or_where('shipper_lat',0);
+        $this->db->or_where('shipper_lng',0);
+        $this->db->or_where('consignee_lat',0);
+        $this->db->or_where('consignee_lng',0);
         $this->db->join('commodity', 'lanes.commodity_id = commodity.commodity_id');
         $selected_lanes = $this->db->get();
         
