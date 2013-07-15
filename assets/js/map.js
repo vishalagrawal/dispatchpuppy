@@ -1,6 +1,6 @@
 // global variables
 var ALPHA = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-var LOADED_MILES = ['#000000', 0.25, 6];
+var LOADED_MILES = ['#000000', 0.3, 6];
 var EMPTY_MILES = ['#FF3B30', 1, 2];
 var MY_MAPTYPE_ID = 'JPD';
 var CHECKBOX = '-CHECKBOX';
@@ -10,7 +10,7 @@ var CONSIGNEE = '-CONSIGNEE';
 var CONSIGNEE_IMAGE = '-CONSIGNEE-IMAGE';
 var EMPTY = '-EMPTY';
 var PRIMARY_LANE_MARKER_FONT_SIZE = 16;
-var SECONDARY_LANE_MARKER_FONT_SIZE = 14;
+var SECONDARY_LANE_MARKER_FONT_SIZE = 12;
 
 var DIV = '-DIV';
 
@@ -24,6 +24,32 @@ var all_marker = {};
 // create empty object to store all alphabet combinations
 var lane_marker_availibility = [];
 var all_lane_marker_ids = {};
+
+/*
+ *
+ * start of helper functions
+ *
+ */
+function alpha(number)
+{
+	var quotient = Math.floor(number/ALPHA.length);
+
+	if(quotient < 1)
+	{
+		return ALPHA[number];
+	}
+	else
+	{
+		var alpha1 = ALPHA[quotient-1];
+		var alpha2 = ALPHA[number%ALPHA.length];
+		return alpha1+alpha2;
+	}
+}
+/*
+ *
+ * end of helper functions
+ *
+ */
 
 function initialize() 
 {
@@ -284,11 +310,7 @@ function getLaneMarkerID(lane_id)
 		index = all_lane_marker_ids[lane_id].lane_marker_id;
 	}
 
-	/* 
-		ALPHA -> can only go upto 26
-		write function to fix this in future
-	*/
-	return ALPHA[index];
+	return alpha(index);
 }
 
 function deleteLaneMarkerID(lane_id)
@@ -440,11 +462,7 @@ function getSubLaneMarkerID(lane_id, sub_lane_id)
 		index = all_lane_marker_ids[lane_id].sub_lanes.all_sub_lane_maker_ids[sub_lane_id];
 	}
 
-	/* 
-		ALPHA -> can only go upto 26
-		write function to fix this in future
-	*/
-	return (ALPHA[alpha_id]+(index+1));
+	return (alpha(alpha_id)+(index+1));
 }
 
 function deleteSubLaneMarkerID(lane_id, sub_lane_id)
