@@ -40,6 +40,7 @@
 				$i = 0;
 				foreach($all_lanes as $lane_id => $lane)
 				{
+					// check lane number
 					if($i==0)
 					{
 						$first_lane = 'first-lane';
@@ -48,6 +49,14 @@
 					{
 						$first_lane = '';
 					}
+
+					// check frequency
+					$frequency = ceil($lane['number_of_loads']/$WEEKS);
+					if($frequency < 1)
+					{
+						$frequency = '&#60; 1';
+					}
+
 					echo '<div class="primary-lane-info'.' '.$first_lane.'" id="'.$lane_id.'" onclick="getLaneLocation(\''.$lane_id.'\')">'
 							.'<div class="shipper-consignee-info">'
 								.'<div class="shipper">'
@@ -79,7 +88,7 @@
 							.'</div>'
 							.'<div class="frequency-commodity-miles-info">'
 								.'<div class="frequency">'
-									.ceil($lane['number_of_loads']/$WEEKS).' <span>per week</span>'
+									.$frequency.' <span>per week</span>'
 								.'</div>'
 								.'<div class="commodity-miles">'
 									.'<span id="'.$lane_id.$EMPTY_DIV.'"></span>'.$lane['commodity_code'].' <b>&middot;</b> '.round($lane['miles'],1).' mi'
@@ -88,47 +97,58 @@
 						.'</div>';
 
 						if($lane['secondary_lanes'] != null)
-						foreach($lane['secondary_lanes'] as $sub_lane_id => $sub_lane)
 						{
-							echo '<div class="primary-lane-info sub-lane-info" id="'.$lane_id.'-'.$sub_lane_id.'" onclick="getSubLaneLocation(\''.$lane_id.'\',\''.$sub_lane_id.'\')">'
-									.'<div class="shipper-consignee-info">'
-										.'<div class="shipper">'
-											.'<div class="marker">'
-												.'<img id="'.$lane_id.'-'.$sub_lane_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/measle-green-black-white.png">'
-											.'</div>'
-											.'<div class="shipper-info">'
-												.'<div class="shipper-name">'
-													.$sub_lane['shipper_name']
+
+							foreach($lane['secondary_lanes'] as $sub_lane_id => $sub_lane)
+							{
+								
+								// check frequency
+								$sub_lane_frequency = ceil($sub_lane['number_of_loads']/$WEEKS);
+								if($sub_lane_frequency < 1)
+								{
+									$sub_lane_frequency = '&#60; 1';
+								}
+
+								echo '<div class="primary-lane-info sub-lane-info" id="'.$lane_id.'-'.$sub_lane_id.'" onclick="getSubLaneLocation(\''.$lane_id.'\',\''.$sub_lane_id.'\')">'
+										.'<div class="shipper-consignee-info">'
+											.'<div class="shipper">'
+												.'<div class="marker">'
+													.'<img id="'.$lane_id.'-'.$sub_lane_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/measle-green-black-white.png">'
 												.'</div>'
-												.'<div class="shipper-address">'
-													.$sub_lane['shipper_city'].', '.$sub_lane['shipper_state']
+												.'<div class="shipper-info">'
+													.'<div class="shipper-name">'
+														.$sub_lane['shipper_name']
+													.'</div>'
+													.'<div class="shipper-address">'
+														.$sub_lane['shipper_city'].', '.$sub_lane['shipper_state']
+													.'</div>'
+												.'</div>'
+											.'</div>'
+											.'<div class="consignee">'
+												.'<div class="marker">'
+													.'<img id="'.$lane_id.'-'.$sub_lane_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/measle-red-black-white.png">'
+												.'</div>'
+												.'<div class="consignee-info">'
+													.'<div class="consignee-name">'
+														.$sub_lane['consignee_name']
+													.'</div>'
+													.'<div class="consignee-address">'
+														.$sub_lane['consignee_city'].', '.$sub_lane['consignee_state']
+													.'</div>'
 												.'</div>'
 											.'</div>'
 										.'</div>'
-										.'<div class="consignee">'
-											.'<div class="marker">'
-												.'<img id="'.$lane_id.'-'.$sub_lane_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/measle-red-black-white.png">'
+										.'<div class="frequency-commodity-miles-info">'
+											.'<div class="frequency">'
+												.$sub_lane_frequency.' <span>per week</span>'
 											.'</div>'
-											.'<div class="consignee-info">'
-												.'<div class="consignee-name">'
-													.$sub_lane['consignee_name']
-												.'</div>'
-												.'<div class="consignee-address">'
-													.$sub_lane['consignee_city'].', '.$sub_lane['consignee_state']
-												.'</div>'
+											.'<div class="commodity-miles">'
+												.'<span id="'.$lane_id.'-'.$sub_lane_id.$EMPTY_DIV.'"></span>'.$sub_lane['commodity_code'].' <b>&middot;</b> '.round($sub_lane['miles']).' mi'
 											.'</div>'
 										.'</div>'
-									.'</div>'
-									.'<div class="frequency-commodity-miles-info">'
-										.'<div class="frequency">'
-											.$sub_lane['number_of_loads'].' <span>per week</span>'
-										.'</div>'
-										.'<div class="commodity-miles">'
-											.'<span id="'.$lane_id.'-'.$sub_lane_id.$EMPTY_DIV.'"></span>'.$sub_lane['commodity_code'].' <b>&middot;</b> '.round($sub_lane['miles']).' mi'
-										.'</div>'
-									.'</div>'
-								.'</div>';
-					}
+									.'</div>';
+							}
+						}
 					$i++;
 				}
 			?>
