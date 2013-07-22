@@ -58,7 +58,7 @@
 					$bins_account = '';
 					if($lane['bins_account']==='Y')
 					{
-						$bins_account = '<img src="'.asset_url().'images/bins-7.png" title="BINS" "alt="BINS"><span> <b>&middot;</b> </span>';
+						$bins_account = '<img src="'.asset_url().'images/bins.png" title="BINS" "alt="BINS"><span> <b>&middot;</b> </span>';
 					}
 
 					// check frequency
@@ -66,6 +66,13 @@
 					if($frequency < 1)
 					{
 						$frequency = '&#60; 1';
+					}
+
+					// check for combinations
+					$combinations = '';
+					if($lane['secondary_lanes'] != null)
+					{
+						$combinations = '<span> <b>&middot;</b> </span><img src="'.asset_url().'images/combinations.png" title="BINS" "alt="BINS">';
 					}
 
 					echo '<div class="primary-lane-info'.' '.$first_lane.'" id="'.$lane_id.'" onclick="getLaneLocation(\''.$lane_id.'\')">'
@@ -109,6 +116,7 @@
 									.' <b>&middot;</b> '
 									.round($lane['miles'],1).' mi'
 									.'<span class="empty-miles" id="'.$lane_id.$EMPTY_DIV.'"></span>'
+									.$combinations
 								.'</div>'
 							.'</div>'
 						.'</div>';
@@ -123,7 +131,7 @@
 								$sub_lane_bins_account = '';
 								if($sub_lane['bins_account']==='Y')
 								{
-									$sub_lane_bins_account = '<img src="'.asset_url().'images/bins-7.png" title="BINS" alt="BINS"><span> <b>&middot;</b> </span>';
+									$sub_lane_bins_account = '<img src="'.asset_url().'images/bins.png" title="BINS" alt="BINS"><span> <b>&middot;</b> </span>';
 								}								
 
 								// check frequency
