@@ -31,6 +31,10 @@
 <body onload="initialize()">
 	<div id="map-canvas"></div>
 	<div id="control-panel">
+		<!--
+		<div id="top-header">
+			<?php echo $title;?>
+		</div>-->
 		<div id="all-lanes">
 			<?php
 				$SHIPPER_IMAGE = '-SHIPPER-IMAGE';
@@ -48,6 +52,13 @@
 					else
 					{
 						$first_lane = '';
+					}
+
+					// check bins
+					$bins_account = '';
+					if($lane['bins_account']==='Y')
+					{
+						$bins_account = '<img src="'.asset_url().'images/bins-7.png"><span> <b>&middot;</b> </span>';
 					}
 
 					// check frequency
@@ -88,10 +99,16 @@
 							.'</div>'
 							.'<div class="frequency-commodity-miles-info">'
 								.'<div class="frequency">'
-									.$frequency.' <span>per week</span>'
+									.$bins_account.$frequency.' <span>per week</span>'
 								.'</div>'
 								.'<div class="commodity-miles">'
-									.'<span id="'.$lane_id.$EMPTY_DIV.'"></span>'.$lane['commodity_code'].' <b>&middot;</b> '.round($lane['miles'],1).' mi'
+									.'<span class="commodity-info">'
+										.'<span class="commodity">'.$lane['commodity'].'</span>'
+										.'<span class="commodity-code">'.$lane['commodity_code'].'</span>'
+									.'</span>'
+									.' <b>&middot;</b> '
+									.round($lane['miles'],1).' mi'
+									.'<span class="empty-miles" id="'.$lane_id.$EMPTY_DIV.'"></span>'
 								.'</div>'
 							.'</div>'
 						.'</div>';
@@ -102,6 +119,13 @@
 							foreach($lane['secondary_lanes'] as $sub_lane_id => $sub_lane)
 							{
 								
+								// check bins
+								$sub_lane_bins_account = '';
+								if($sub_lane['bins_account']==='Y')
+								{
+									$sub_lane_bins_account = '<img src="'.asset_url().'images/bins-7.png"><span> <b>&middot;</b> </span>';
+								}								
+
 								// check frequency
 								$sub_lane_frequency = ceil($sub_lane['number_of_loads']/$WEEKS);
 								if($sub_lane_frequency < 1)
@@ -140,10 +164,16 @@
 										.'</div>'
 										.'<div class="frequency-commodity-miles-info">'
 											.'<div class="frequency">'
-												.$sub_lane_frequency.' <span>per week</span>'
+												.$sub_lane_bins_account.$sub_lane_frequency.' <span>per week</span>'
 											.'</div>'
 											.'<div class="commodity-miles">'
-												.'<span id="'.$lane_id.'-'.$sub_lane_id.$EMPTY_DIV.'"></span>'.$sub_lane['commodity_code'].' <b>&middot;</b> '.round($sub_lane['miles']).' mi'
+												.'<span class="empty-miles" id="'.$lane_id.'-'.$sub_lane_id.$EMPTY_DIV.'"></span>'
+												.'<span class="commodity-info">'
+													.'<span class="commodity">'.$sub_lane['commodity'].'</span>'
+													.'<span class="commodity-code">'.$sub_lane['commodity_code'].'</span>'
+												.'</span>'
+												.' <b>&middot;</b> '
+												.round($sub_lane['miles']).' mi'
 											.'</div>'
 										.'</div>'
 									.'</div>';
