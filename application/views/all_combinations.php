@@ -58,7 +58,7 @@
 					$bins_account = '';
 					if($lane['bins_account']==='Y')
 					{
-						$bins_account = '<img src="'.asset_url().'images/bins-7.png"><span> <b>&middot;</b> </span>';
+						$bins_account = '<img src="'.asset_url().'images/bins-7.png" title="BINS" "alt="BINS"><span> <b>&middot;</b> </span>';
 					}
 
 					// check frequency
@@ -72,7 +72,7 @@
 							.'<div class="shipper-consignee-info">'
 								.'<div class="shipper">'
 									.'<div class="marker">'
-										.'<img id="'.$lane_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/green/measle-green.png">'
+										.'<img id="'.$lane_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/green/measle-green.png" title="Shipper" "alt="Shipper">'
 									.'</div>'
 									.'<div class="shipper-info">'
 										.'<div class="shipper-name">'
@@ -85,7 +85,7 @@
 								.'</div>'
 								.'<div class="consignee">'
 									.'<div class="marker">'
-										.'<img id="'.$lane_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/red/measle-red.png">'
+										.'<img id="'.$lane_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/red/measle-red.png" title="Consignee" "alt="Consignee">'
 									.'</div>'
 									.'<div class="consignee-info">'
 										.'<div class="consignee-name">'
@@ -123,7 +123,7 @@
 								$sub_lane_bins_account = '';
 								if($sub_lane['bins_account']==='Y')
 								{
-									$sub_lane_bins_account = '<img src="'.asset_url().'images/bins-7.png"><span> <b>&middot;</b> </span>';
+									$sub_lane_bins_account = '<img src="'.asset_url().'images/bins-7.png" title="BINS" alt="BINS"><span> <b>&middot;</b> </span>';
 								}								
 
 								// check frequency
@@ -137,7 +137,7 @@
 										.'<div class="shipper-consignee-info">'
 											.'<div class="shipper">'
 												.'<div class="marker">'
-													.'<img id="'.$lane_id.'-'.$sub_lane_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/measle-green-black-white.png">'
+													.'<img id="'.$lane_id.'-'.$sub_lane_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/measle-green-black-white.png" title="Shipper" "alt="Shipper">'
 												.'</div>'
 												.'<div class="shipper-info">'
 													.'<div class="shipper-name">'
@@ -150,7 +150,7 @@
 											.'</div>'
 											.'<div class="consignee">'
 												.'<div class="marker">'
-													.'<img id="'.$lane_id.'-'.$sub_lane_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/measle-red-black-white.png">'
+													.'<img id="'.$lane_id.'-'.$sub_lane_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/measle-red-black-white.png" title="Consignee" "alt="Consignee">'
 												.'</div>'
 												.'<div class="consignee-info">'
 													.'<div class="consignee-name">'
