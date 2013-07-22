@@ -1,0 +1,11 @@
+Database name and username:
+dispatchpuppy
+
+Admin URL (phpMyAdmin): 
+https://p3nlmysqladm002.secureserver.net/grid50/6411
+
+MySQL version:
+5.0 (Direct access not allowed)
+
+Hostname:
+dispatchpuppy.db.8646755.hostedresource.com
