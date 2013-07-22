@@ -47,7 +47,8 @@ class Lanes extends CI_Model {
                     'consignee_lng'     => $row->consignee_lng,
                     'commodity_id'      => $row->commodity_id,
                     'commodity_code'    => $row->commodity_code,
-                    //'commodity'       => $row->commodity,
+                    'commodity'       => $row->commodity,
+                    'bins_account'      => $row->bins_account,
                     'number_of_loads'   => $row->number_of_loads,
                     'miles'             => $row->miles,
                     'secondary_lanes'   => null
@@ -91,8 +92,8 @@ class Lanes extends CI_Model {
                             'consignee_lng'     => $sub_row->consignee_lng,
                             'commodity_id'      => $row->commodity_id,
                             'commodity_code'    => $row->commodity_code,
-                            //'commodity'       => $row->commodity,
-                            'commodity_code'    => $sub_row->commodity_code,
+                            'commodity'       => $row->commodity,
+                            'bins_account'      => $row->bins_account,
                             'number_of_loads'   => $sub_row->number_of_loads,
                             'miles'             => $sub_row->miles
                         );
@@ -162,6 +163,7 @@ class Lanes extends CI_Model {
                     'commodity_id'      => $row->commodity_id,
                     'commodity_code'    => $row->commodity_code,
                     //'commodity'       => $row->commodity,
+                    'bins_account'      => $row->bins_account,
                     'number_of_loads'   => $row->number_of_loads,
                     'miles'             => $row->miles
                 );
