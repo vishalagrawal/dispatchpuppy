@@ -27,5 +27,5 @@ class Locations extends CI_Model {
     }
 }
 
-/* End of file lanes.php */
-/* Location: ./application/models/lanes.php */
+/* End of file locations.php */
+/* Location: ./application/models/locations.php */
