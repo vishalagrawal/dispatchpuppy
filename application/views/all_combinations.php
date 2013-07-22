@@ -72,7 +72,7 @@
 					$combinations = '';
 					if($lane['secondary_lanes'] != null)
 					{
-						$combinations = '<span> <b>&middot;</b> </span><img src="'.asset_url().'images/combinations.png" title="BINS" "alt="BINS">';
+						$combinations = '<span> <b>&middot;</b> </span><img src="'.asset_url().'images/combinations.png" title="Combinations" "alt="Combinations">';
 					}
 
 					echo '<div class="primary-lane-info'.' '.$first_lane.'" id="'.$lane_id.'" onclick="getLaneLocation(\''.$lane_id.'\')">'
