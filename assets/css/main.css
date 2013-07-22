@@ -117,9 +117,21 @@ html, body {
     overflow-y: scroll;
 }
 
-#all-lanes {
-    height: 100%;
+/*#top-header {
+    position: fixed;
+    top:0;
+    background: #8E8E93;
+    color: #FFFFFF;
+    width: 37.2%;
+    height: 1.5em;
+    padding: 0.75em 0em 0.75em 0em;
+    z-index:999;
+    text-align: center;
 }
+
+#all-lanes {
+    padding-top: 2.5em;
+}*/
 
 div.primary-lane-info {
     color: #8E8E93;
@@ -141,7 +153,7 @@ div.primary-lane-info :first-child {
 }
 
 div.primary-lane-info:hover {
-    background-color: #F2F2F2; /* mail chimp brand asset color */
+    background-color: #FFE8AA; /* mail chimp brand asset color */
 }
 
 /* sub lane */
@@ -150,6 +162,7 @@ div.sub-lane-info {
     padding-left: 10%;
     border-top: 0.1em dashed #8E8E93;
     display: none;
+    background-color: #F2F2F2; /* mail chimp brand asset color */
 }
 
 /* left column */
@@ -177,7 +190,7 @@ div.marker {
     text-align: center;
 }
 
-div.marker img{
+img{
     max-width:100% !important;
     height:auto;
 }
@@ -217,7 +230,24 @@ div.commodity-miles {
     font-size: 0.9em;
 }
 
-div.commodity-miles span {
+    /* Hide the second piece of text by default */
+    span.commodity-info span.commodity {
+         display:none;
+    }
+
+    /* Hide the first piece of text on hover */
+    span.commodity-info:hover span.commodity-code{
+         display:none;
+    }
+
+    /* Re-show the second piece of text on hover */
+
+    span.commodity-info:hover span.commodity{
+        display:inline;
+        color: #007AFF;
+    }
+
+div.commodity-miles span.empty-miles{
     color: #FF3B30;
 }
 

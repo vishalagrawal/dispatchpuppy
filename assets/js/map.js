@@ -11,6 +11,8 @@ var CONSIGNEE_IMAGE = '-CONSIGNEE-IMAGE';
 var EMPTY = '-EMPTY';
 var PRIMARY_LANE_MARKER_FONT_SIZE = 16;
 var SECONDARY_LANE_MARKER_FONT_SIZE = 12;
+var PRIMARY = 'PRIMARY';
+var SECONDARY = 'SECONDARY';
 
 var DIV = '-DIV';
 
@@ -161,7 +163,7 @@ function getLaneLocation(lane_id)
 		//drawPath([shipper_primary_location, consignee_primary_location], LOADED_MILES, lane_id);
 
 		// map directions from primary shipper to primary consignee
-		calcRoute(shipper_primary_location, consignee_primary_location, LOADED_MILES, lane_id);
+		calcRoute(shipper_primary_location, consignee_primary_location, LOADED_MILES, lane_id, PRIMARY);
 		
 		if(lane.secondary_lanes != null)
 		{
@@ -174,7 +176,7 @@ function getLaneLocation(lane_id)
 		else
 		{
 			// show a run for empty miles	
-			calcRoute(consignee_primary_location, shipper_primary_location, EMPTY_MILES, lane_id+EMPTY);
+			calcRoute(consignee_primary_location, shipper_primary_location, EMPTY_MILES, lane_id+EMPTY, PRIMARY);
 		}
 		
 		// add the active-lane class to the lane div
@@ -346,7 +348,7 @@ function getSubLaneLocation(lane_id, sub_lane_id)
 		//drawPath([consignee_primary_location, shipper_secondary_location], EMPTY_MILES, sub_lane_div_id+EMPTY);
 
 		//map directions from primary consignee to secondary shipper
-		calcRoute(consignee_primary_location, shipper_secondary_location, EMPTY_MILES, sub_lane_div_id+EMPTY);
+		calcRoute(consignee_primary_location, shipper_secondary_location, EMPTY_MILES, sub_lane_div_id+EMPTY, SECONDARY);
 
 		// add marker for secondary consignee
 		var consignee_secondary_location = new google.maps.LatLng(sub_lane.consignee_lat, sub_lane.consignee_lng);
@@ -358,7 +360,7 @@ function getSubLaneLocation(lane_id, sub_lane_id)
 		//drawPath([shipper_secondary_location, consignee_secondary_location],LOADED_MILES, sub_lane_div_id);
 
 		// map directions from secondary shipper to secondary consignee			
-		calcRoute(shipper_secondary_location, consignee_secondary_location, LOADED_MILES, sub_lane_div_id);
+		calcRoute(shipper_secondary_location, consignee_secondary_location, LOADED_MILES, sub_lane_div_id, SECONDARY);
 
 		document.getElementById(sub_lane_div_id).className += ' active-lane';
 	}
@@ -499,6 +501,7 @@ function addMarker(location, icon, title, info, lane_id)
 		title: title
 	});
 
+	//marker.setAnimation(google.maps.Animation.DROP);
 	markerBounds.extend(location);
 	map.fitBounds(markerBounds);
 	all_marker[lane_id] = marker;
@@ -514,7 +517,7 @@ function consigneeMarker(text,size)
 	return 'https://mts0.google.com/vt/icon/text='+text+'&psize='+size+'&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=1';
 }
 
-function calcRoute(origin, destination, path_style_info, lane_id)
+function calcRoute(origin, destination, path_style_info, lane_id, type)
 {
 	var request = {
 		origin: origin,
@@ -535,8 +538,19 @@ function calcRoute(origin, destination, path_style_info, lane_id)
   			if(lane_id.indexOf(EMPTY) > 0)
   			{
   				var distance = result.routes[0].legs[0].distance.text;
-  				document.getElementById(lane_id+DIV).innerHTML = distance + '<b style="color:#8E8E93;"> &middot; </b>';
+  				if(type === PRIMARY)
+  				{
+  					document.getElementById(lane_id+DIV).innerHTML = '<b style="color:#8E8E93;"> &middot; </b>' + distance;
+  				}
+  				else
+  				{
+  					document.getElementById(lane_id+DIV).innerHTML = distance + '<b style="color:#8E8E93;"> &middot; </b>';
+  				}
   			}
+  		}
+  		else
+  		{
+  			alert("Calc Route was not successful for the following reason: " + status);
   		}
   	});
 }
@@ -555,45 +569,32 @@ function drawPath(path, path_style_info, lane_id)
 	poly_lines[lane_id] = myLine;
 }
 
+function showCommodity(commodity)
+{
+	alert(commodity);
+}
+
 /*
  *
- * view - get_location
+ * controller - get_customer_location
+ * view - get_customer_location
  *
  */
 
 var geocoder;
 
-// also in model for lanes
-var BILL_TO_CUSTOMER = 'BILL_TO';
-var SHIPPER_CUSTOMER = 'SHIPPER';
-var CONSIGNEE_CUSTOMER = 'CONSIGNEE';
+var LAT = '-LAT';
+var LNG = '-LNG';
+var STATUS = '-STATUS';
 
-var SHIPPER_LAT = '-SHIPPER-LAT';
-var SHIPPER_LNG = '-SHIPPER-LNG';
-var SHIPPER_STATUS = '-SHIPPER-STATUS';
-
-var CONSIGNEE_LAT = '-CONSIGNEE-LAT';
-var CONSIGNEE_LNG = '-CONSIGNEE-LNG';
-var CONSIGNEE_STATUS = '-CONSIGNEE-STATUS';
-
-var UPDATE_STATUS = '-LANE-STATUS';
-
-function getLatLng(lane_id)
+function getLatLng(customer_id)
 {
-	var bill_to_address = all_lanes[lane_id].bill_to_address + ',' + all_lanes[lane_id].bill_to_city + ',' + all_lanes[lane_id].bill_to_state + ',' + all_lanes[lane_id].bill_to_zipcode;
+	var address = customers_without_lat_lng[customer_id].address + ',' + customers_without_lat_lng[customer_id].city + ',' + customers_without_lat_lng[customer_id].state + ',' + customers_without_lat_lng[customer_id].zipcode;
 
-	updateAddress(bill_to_address, lane_id, BILL_TO_CUSTOMER);
-
-	var shipper_address = all_lanes[lane_id].shipper_address + ',' + all_lanes[lane_id].shipper_city + ',' + all_lanes[lane_id].shipper_state + ',' + all_lanes[lane_id].shipper_zipcode;	
-
-	updateAddress(shipper_address, lane_id, SHIPPER_CUSTOMER);
-
-	var consignee_address = all_lanes[lane_id].consignee_address + ',' + all_lanes[lane_id].consignee_city + ',' + all_lanes[lane_id].consignee_state + ',' + all_lanes[lane_id].consignee_zipcode;	
-
-	updateAddress(consignee_address, lane_id, CONSIGNEE_CUSTOMER);
+	updateLatLng(address, customer_id);
 }
 
-function updateAddress(address, lane_id, customer_type)
+function updateLatLng(address, customer_id)
 {
 	geocoder = new google.maps.Geocoder();
 
@@ -602,8 +603,8 @@ function updateAddress(address, lane_id, customer_type)
 	    {
 	        var lat = results[0].geometry.location.lat();
 	        var lng = results[0].geometry.location.lng();
-
-	        updateRecord(lane_id, customer_type, lat, lng);
+	        //addMarker(consignee_secondary_location, [CONSIGNEE, marker_id, SECONDARY_LANE_MARKER_FONT_SIZE], consignee_secondary_title, consignee_secondary_content, sub_lane_div_id+CONSIGNEE);
+	        updateRecord(customer_id, lat, lng);
 	    }
 	    else 
 	    {
@@ -612,7 +613,7 @@ function updateAddress(address, lane_id, customer_type)
     });
 }
 
-function updateRecord(lane_id, customer_type, lat, lng)
+function updateRecord(customer_id, lat, lng)
 {
 	var xmlhttp;
 
@@ -629,20 +630,12 @@ function updateRecord(lane_id, customer_type, lat, lng)
   	{
   		if (xmlhttp.readyState==4 && xmlhttp.status==200)
     	{
-    		if(customer_type === SHIPPER_CUSTOMER)
-    		{
-    			document.getElementById(lane_id+SHIPPER_LAT).innerHTML = lat;
-	        	document.getElementById(lane_id+SHIPPER_LNG).innerHTML = lng;
-    			document.getElementById(lane_id+SHIPPER_STATUS).innerHTML=xmlhttp.responseText;
-    		}
-    		else if(customer_type === CONSIGNEE_CUSTOMER)
-	        {
-	        	document.getElementById(lane_id+CONSIGNEE_LAT).innerHTML = lat;
-	        	document.getElementById(lane_id+CONSIGNEE_LNG).innerHTML = lng;
-	        	document.getElementById(lane_id+CONSIGNEE_STATUS).innerHTML=xmlhttp.responseText;
-	        }
+    		document.getElementById(customer_id+LAT).innerHTML = lat;
+	        document.getElementById(customer_id+LNG).innerHTML = lng;
+    		document.getElementById(customer_id+STATUS).innerHTML=xmlhttp.responseText;
+    		//addMarker(consignee_secondary_location, [CONSIGNEE, marker_id, SECONDARY_LANE_MARKER_FONT_SIZE], consignee_secondary_title, consignee_secondary_content, sub_lane_div_id+CONSIGNEE);
     	}
   	}
-	xmlhttp.open("GET","add_lat_lng/update_lat_lng/"+lane_id+"/"+customer_type+"/"+lat+"/"+lng,true);
+	xmlhttp.open("GET","get_customer_location/update_customer_lat_lng/"+customer_id+"/"+lat+"/"+lng,true);
 	xmlhttp.send();
 }

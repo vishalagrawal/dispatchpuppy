@@ -1,7 +1,16 @@
-∞ overlaying icons (add icon on top to the lanes in control pannel)
-∞ differentiating primary run from secondary run
-∞ the opacity and thickness of loaded and empty miles
 ∞ design logo for dispatch puppy
 ∞ show commodity information on click
-∞ adding a run directly to the database (create a view for this)
+∞ adding a run directly to the database (create a view for this) by just entering customer info
 ∞ creating a seperate database for customer info
+∞ automate getting location for multiple lanes
+∞ re-render the bins icon with a different color
+
+Future Tools
+∞ dynamically change the date range to select how many loads per week in a given period
+∞ overlaying icons (show the main icon when multiple icons are being dropped on the same location)
+∞ better differentiate primary run from secondary run
+∞ the opacity and thickness of loaded and empty miles
+∞ display all inbound runs to destination
+
+TMW fixes
+∞ make all default driver pay 0 in TMW aka driver gets paid $0 if no rate has been entered
