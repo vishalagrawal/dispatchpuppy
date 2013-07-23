@@ -141,10 +141,11 @@ function getLaneLocation(lane_id)
 	// get the lane info
 	var lane = all_lanes[lane_id];
 	var shipper_primary_location = new google.maps.LatLng(lane.shipper_lat, lane.shipper_lng);
-	var consignee_primary_location = new google.maps.LatLng(lane.consignee_lat, lane.consignee_lng);
 	
 	if(document.getElementById(lane_id).className.split(' ').indexOf('active-lane') < 0)
 	{
+		var consignee_primary_location = new google.maps.LatLng(lane.consignee_lat, lane.consignee_lng);
+		
 		var marker_id = getLaneMarkerID(lane_id);
 
 		// add marker for primary shipper
@@ -235,10 +236,10 @@ function getLaneLocation(lane_id)
 
 				document.getElementById(sub_lane_div_id+EMPTY+DIV).innerHTML = '';
 
-				document.getElementById(sub_lane_div_id).className = document.getElementById(sub_lane_div_id).className.replace( /(?:^|\s)active-lane(?!\S)/g , '' );
-
 				// hide the sub-lane div 
 				document.getElementById(sub_lane_div_id).style.display = 'none';
+
+				document.getElementById(sub_lane_div_id).className = document.getElementById(sub_lane_div_id).className.replace( /(?:^|\s)active-lane(?!\S)/g , '' );
 			}
 		}
 		else
@@ -535,6 +536,9 @@ function calcRoute(origin, destination, path_style_info, lane_id, type)
 
   			allLatLong = result.routes[0].overview_path;
   			drawPath(allLatLong, path_style_info, lane_id);
+
+  			//var driving_time = getDrivingTime(origin,destination);
+
   			if(lane_id.indexOf(EMPTY) > 0)
   			{
   				var distance = result.routes[0].legs[0].distance.text;
@@ -567,6 +571,49 @@ function drawPath(path, path_style_info, lane_id)
 	});
 
 	poly_lines[lane_id] = myLine;
+}
+
+function getDrivingTime(origin, destination)
+{
+	var service = new google.maps.DistanceMatrixService();
+	service.getDistanceMatrix(
+  	{
+    	origins: [origin],
+    	destinations: [destination],
+    	travelMode: google.maps.TravelMode.DRIVING,
+    	unitSystem: google.maps.UnitSystem.IMPERIAL,
+    	durationInTraffic: true,
+    	avoidHighways: false,
+    	avoidTolls: false
+  	}, callback);
+}
+
+function callback(response, status) 
+{
+  if (status != google.maps.DistanceMatrixStatus.OK) 
+  {
+    alert('Error was: ' + status);
+  	return null;
+  }
+  else
+  {
+  	var origins = response.originAddresses;
+    var destinations = response.destinationAddresses;
+
+    for (var i = 0; i < origins.length; i++) 
+    {
+      var results = response.rows[i].elements;
+      for (var j = 0; j < results.length; j++) 
+      {
+        var element = results[j];
+        var distance = element.distance.text;
+        var duration = element.duration.text;
+        //var from = origins[i];
+        //var to = destinations[j];
+      }
+      alert(distance+','+duration);
+    }
+  }
 }
 
 function showCommodity(commodity)
@@ -639,3 +686,152 @@ function updateRecord(customer_id, lat, lng)
 	xmlhttp.open("GET","get_customer_location/update_customer_lat_lng/"+customer_id+"/"+lat+"/"+lng,true);
 	xmlhttp.send();
 }
+
+/*
+ *
+ * controller - map_inbound
+ * view - map_inbound
+ *
+ */
+
+ function getConsigneeLocation(consignee_id)
+ {
+	// get the consignee information
+	var consignee = all_combinations[consignee_id];
+
+	// adding a marker
+	if(document.getElementById(consignee_id).className.split(' ').indexOf('active-consignee') < 0)
+	{
+ 		// get the consignee location for marker
+ 		var consignee_location = new google.maps.LatLng(consignee.consignee_lat, consignee.consignee_lng);
+ 		
+ 		// get marker_id for the marker
+ 		var marker_id = getLaneMarkerID(consignee_id);
+
+ 		// set the title and content for the marker
+ 		var consignee_title = consignee.consignee_name;
+		var consignee_content = consignee.consignee_name+'<br>'+consignee.consignee_city+' ,'+consignee.consignee_state;
+
+		// add marker
+		addMarker(consignee_location, [CONSIGNEE, marker_id, PRIMARY_LANE_MARKER_FONT_SIZE], consignee_title, consignee_content, consignee_id+CONSIGNEE);
+		document.getElementById(consignee_id+CONSIGNEE_IMAGE).src = consigneeMarker(marker_id, PRIMARY_LANE_MARKER_FONT_SIZE);
+
+		// check if shipper exisit
+		if(consignee.shippers != null)
+		{
+			for(var shipper_id in consignee.shippers)
+			{
+				var shipper_div_id = consignee_id+'-'+shipper_id;
+				// display the shippr divs
+				document.getElementById(shipper_div_id).style.display = 'block';
+			}
+		}
+		else
+		{
+			/* do something */
+		}
+
+		// add the active-consignee class to the consignee div
+		document.getElementById(consignee_id).className += ' active-consignee';
+	}
+	else
+	{
+		// remove the marker for consignee
+		all_marker[consignee_id+CONSIGNEE].setMap(null);
+		document.getElementById(consignee_id+CONSIGNEE_IMAGE).src = DEFAULT_MARKER_PRIMARY_CONSIGNEE;
+		delete all_marker[consignee_id+CONSIGNEE];
+
+		// check if shipper exisit
+		if(consignee.shippers != null)
+		{
+			for(var shipper_id in consignee.shippers)
+			{
+				var shipper_div_id = consignee_id+'-'+shipper_id;
+				if(document.getElementById(shipper_div_id).className.split(' ').indexOf('active-shipper') > 0)
+				{
+					// remove the marker for secondary shipper
+					all_marker[shipper_div_id+SHIPPER].setMap(null);
+					document.getElementById(shipper_div_id+SHIPPER_IMAGE).src = DEFAULT_MARKER_PRIMARY_SHIPPER;
+					delete all_marker[shipper_div_id+SHIPPER];
+
+					// remove the poly line from shipper to consignee 
+					if(typeof(poly_lines[shipper_div_id]) != 'undefined')
+					{
+						poly_lines[shipper_div_id].setMap(null);
+						delete poly_lines[shipper_div_id];
+					}
+				}	
+				
+				// remove active-shipper class from the shipper div
+				document.getElementById(shipper_div_id).className = document.getElementById(shipper_div_id).className.replace( /(?:^|\s)active-shipper(?!\S)/g , '' );
+
+				// hide the shipper div
+				document.getElementById(shipper_div_id).style.display = 'none';
+			}
+		}
+		else
+		{
+			/* do something */
+		}
+
+		// delete the laneMarkerID
+		deleteLaneMarkerID(consignee_id);
+
+		// remove the active-consignee class from the consignee div
+		document.getElementById(consignee_id).className = document.getElementById(consignee_id).className.replace( /(?:^|\s)active-consignee(?!\S)/g , '' );
+	}	
+ }
+
+ function getShipperLocation(consignee_id, shipper_id)
+ {
+ 	// get the consignee info
+	var consignee = all_combinations[consignee_id];
+
+	var shipper = consignee.shippers[shipper_id];
+	var shipper_div_id = consignee_id+'-'+shipper_id;
+
+	if(document.getElementById(shipper_div_id).className.split(' ').indexOf('active-shipper') < 0)
+	{
+		// get consignee location for marker
+		var consignee_location = new google.maps.LatLng(consignee.consignee_lat, consignee.consignee_lng);
+
+		// get shipper location for marker
+		var shipper_location = new google.maps.LatLng(shipper.shipper_lat, shipper.shipper_lng);
+		
+		// get the marker id for the marker
+		var marker_id = getSubLaneMarkerID(consignee_id, shipper_id);
+
+		// set the title and content for the shipper
+		var shipper_title = shipper.shipper_name;
+		var shipper_content = shipper.shipper_name+'<br>'+shipper.shipper_city+' ,'+shipper.shipper_state;
+
+		//add marker
+		addMarker(shipper_location, [SHIPPER, marker_id, SECONDARY_LANE_MARKER_FONT_SIZE], shipper_title, shipper_content, shipper_div_id+SHIPPER);
+		document.getElementById(shipper_div_id+SHIPPER_IMAGE).src = shipperMarker(marker_id, SECONDARY_LANE_MARKER_FONT_SIZE);
+
+		// map directions from secondary shipper to secondary consignee			
+		calcRoute(shipper_location, consignee_location, LOADED_MILES, shipper_div_id, SECONDARY);
+
+		document.getElementById(shipper_div_id).className += ' active-shipper';
+	}
+	else
+	{
+		// remove the marker at shipper
+		all_marker[shipper_div_id+SHIPPER].setMap(null);
+		document.getElementById(shipper_div_id+SHIPPER_IMAGE).src = DEFAULT_MARKER_PRIMARY_SHIPPER;
+		delete all_marker[shipper_div_id+SHIPPER];
+
+		// remove the poly line from shipper to consignee 
+		if(typeof(poly_lines[shipper_div_id]) != 'undefined')
+		{
+			poly_lines[shipper_div_id].setMap(null);
+			delete poly_lines[shipper_div_id];
+		}
+
+		// remove the maker_id from the array and the object
+		deleteSubLaneMarkerID(consignee_id, shipper_id);
+
+		// remove active-shipper class from shipper div
+		document.getElementById(shipper_div_id).className = document.getElementById(shipper_div_id).className.replace( /(?:^|\s)active-shipper(?!\S)/g , '' );
+	}
+ }

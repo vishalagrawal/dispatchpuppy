@@ -31,10 +31,6 @@
 <body onload="initialize()">
 	<div id="map-canvas"></div>
 	<div id="control-panel">
-		<!--
-		<div id="top-header">
-			<?php echo $title;?>
-		</div>-->
 		<div id="all-lanes">
 			<?php
 				$SHIPPER_IMAGE = '-SHIPPER-IMAGE';
@@ -62,7 +58,7 @@
 					}
 
 					// check frequency
-					$frequency = ceil($lane['number_of_loads']/$WEEKS);
+					$frequency = floor($lane['number_of_loads']/$WEEKS);
 					if($frequency < 1)
 					{
 						$frequency = '&#60; 1';
@@ -135,7 +131,7 @@
 								}								
 
 								// check frequency
-								$sub_lane_frequency = ceil($sub_lane['number_of_loads']/$WEEKS);
+								$sub_lane_frequency = floor($sub_lane['number_of_loads']/$WEEKS);
 								if($sub_lane_frequency < 1)
 								{
 									$sub_lane_frequency = '&#60; 1';
