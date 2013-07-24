@@ -29,7 +29,73 @@
 </head>
 
 <body onload="initialize()">
-	<div id="map-canvas"></div>
+	<div id="header">
+		<div id="left-panel">
+			<div id="logo">
+				<img id="logo-image" src="<?php echo asset_url();?>images/logo.png" title="DispatchPuppy" alt="DispatchPuppy">
+			</div>
+			<div id="nav">
+			</div>
+		</div>
+		<div id="right-panel">
+			<div id="title">
+				<?php echo $title;?>
+			</div>
+		</div>
+	</div>
+	<div id="map-canvas">
+		<div id="map"></div>
+		<div id="key">
+			<div class="key-content">
+				<div class="marker">
+					<img id="" src="<?php echo asset_url();?>images/loaded_miles.png" title="Loaded Miles" alt="Loaded Miles">
+				</div>
+				<div class="key-info">
+					Loaded Miles
+				</div>
+			</div>
+			<div class="key-content">
+				<div class="marker">
+					<img id="" src="<?php echo asset_url();?>images/empty_miles.png" title="Empty Miles" alt="Empty Miles">
+				</div>
+				<div class="key-info">
+					Empty Miles
+				</div>
+			</div>
+			<div class="key-content">
+				<div class="marker">
+					<img id="" src="<?php echo asset_url();?>images/google-icons/green/measle-green.png" title="Shipper" alt="Shipper">
+				</div>
+				<div class="key-info">
+					Shipper
+				</div>
+			</div>
+			<div class="key-content">
+				<div class="marker">
+					<img id="" src="<?php echo asset_url();?>images/google-icons/red/measle-red.png" title="Consignee" alt="Consignee">
+				</div>
+				<div class="key-info">
+					Consignee
+				</div>
+			</div>
+			<div class="key-content">
+				<div class="marker">
+					<img id="" src="<?php echo asset_url();?>images/bins.png" title="BINS" alt="BINS">
+				</div>
+				<div class="key-info">
+					BINS
+				</div>
+			</div>
+			<div class="key-content">
+				<div class="marker">
+					<img id="" src="<?php echo asset_url();?>images/combinations.png" title="BINS" alt="BINS">
+				</div>
+				<div class="key-info">
+					Combinations
+				</div>
+			</div>
+		</div>
+	</div>
 	<div id="control-panel">
 		<div id="all-lanes">
 			<?php
@@ -111,7 +177,7 @@
 									.'</span>'
 									.' <b>&middot;</b> '
 									.round($lane['miles'],1).' mi'
-									.'<span class="empty-miles" id="'.$lane_id.$EMPTY_DIV.'"></span>'
+									.'<span class="empty-miles" id="'.$lane_id.$EMPTY_DIV.'" title="Empty Miles"></span>'
 									.$combinations
 								.'</div>'
 							.'</div>'
@@ -171,7 +237,7 @@
 												.$sub_lane_bins_account.$sub_lane_frequency.' <span>per week</span>'
 											.'</div>'
 											.'<div class="commodity-miles">'
-												.'<span class="empty-miles" id="'.$lane_id.'-'.$sub_lane_id.$EMPTY_DIV.'"></span>'
+												.'<span class="empty-miles" id="'.$lane_id.'-'.$sub_lane_id.$EMPTY_DIV.'" title="Empty Miles"></span>'
 												.'<span class="commodity-info">'
 													.'<span class="commodity">'.$sub_lane['commodity'].'</span>'
 													.'<span class="commodity-code">'.$sub_lane['commodity_code'].'</span>'

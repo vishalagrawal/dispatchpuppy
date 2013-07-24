@@ -101,54 +101,97 @@ html, body {
     padding: 0;
 }
 
-/*
 #header {
+    clear: both;
     width: 100%;
     height: 5%;
-    background-color: #34AADC;
-}*/
+}
+
+#left-panel {
+    height: 100%;
+    background-color: #B1E0EC; /* mail chimp blue-4*/
+    width: 61.8%; /*golden ration percentage*/
+    float: left;
+    -webkit-box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
+    box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
+}
+
+    #logo {
+        height: 85%;
+        padding:0.3em 0 0 0.3em;
+    }
+
+    #logo-image {
+        height: 100%;
+    }
+
+#right-panel {
+    height: 100%;
+    background-color: #B1E0EC; /* mail chimp blue-4*/
+    width: 38.2%; /*golden ration percentage*/
+    float: right;
+    -webkit-box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
+    box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
+}
+
+    #title {
+        text-align: center;
+        height: 100%;
+        padding: 0.5em 0 0 0;
+        color: #2C9AB7;
+        font-size: 1em;
+    }
 
 #map-canvas {
     width: 61.8%; /*golden ration percentage*/
-    height:100%;
+    height: 95%;
     float: left;
     display: inline-block;
     position: absolute;
+    -webkit-box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
+    box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
 }
+
+    #map {
+        height: 96%;
+        -webkit-box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
+        box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
+    }
+
+    #key {
+        width: 100%;
+        height: 4%;
+        background-color: #F2F2F2; /* mail chimp gray-2 */
+        color: #5D5C5D;
+        font-size: 0.9em;
+    }
+        div.key-content {
+            width:16%;
+            height: 100%;
+            display: inline-block;
+        }
+
+        div.key-content img{
+            height: 10%;
+        }
 
 #control-panel {
     width: 38.2%; /*golden ration percentage*/
-    height: 100%;
+    height: 95%;
     float: right;
     position: relative;
     overflow-y: scroll;
 }
 
-/*#top-header {
-    position: fixed;
-    top:0;
-    background: #8E8E93;
-    color: #FFFFFF;
-    width: 37.2%;
-    height: 1.5em;
-    padding: 0.75em 0em 0.75em 0em;
-    z-index:999;
-    text-align: center;
-}
-
-#all-lanes {
-    padding-top: 2.5em;
-}*/
-
 div.primary-lane-info {
-    color: #8E8E93;
+    color: #8E8E93; /*apple grey*/
     font-size: 0.9em;
     overflow: auto;
     position: relative;
     padding: 2.5%;
     cursor: hand; 
     cursor: pointer;
-    border-top: 0.2em dotted #8E8E93;
+    border-top: 0.1em dotted #5D5C5D; /*mail chimp grey-2*/
 }
 
 div.first-lane {
@@ -156,16 +199,16 @@ div.first-lane {
 }
 
 div.primary-lane-info:hover {
-    background-color: #FFE8AA; /* mail chimp brand asset color */
+    background-color: #FFE8AA; /*mail chimp yellow-4*/
 }
 
 /* sub lane */
 div.sub-lane-info {
     font-size: 0.8em;
     padding-left: 10%;
-    border-top: 0.1em dashed #8E8E93;
+    border-top: 0.1em dashed #5D5C5D; /*mail chimp grey-2*/
     display: none;
-    background-color: #F2F2F2; /* mail chimp brand asset color */
+    background-color: #F2F2F2; /*mail chimp gray-4*/
 }
 
 /* left column */
@@ -205,7 +248,7 @@ div.shipper-info, div.consignee-info {
 }
 
 div.shipper-name, div.consignee-name {
-    color: #000000;
+    color: #000000; 
 }
 
 div.shipper-address, div.consignee-address {
@@ -225,7 +268,7 @@ div.frequency {
 }
 
 div.frequency span {
-    color: #8E8E93;
+    color: #8E8E93; /*apple grey*/
     font-size: 0.8em;
 }
 
@@ -252,14 +295,15 @@ span.commodity-code {
     span.commodity-info:hover span.commodity{
         display:inline;
         color: #000000;
+        font-weight: bold;
     }
 
 div.commodity-miles span.empty-miles{
-    color: #FF3B30;
+    color: #DB3A1B; /*mail chimp red-2*/
 }
 
 div.status {
-    color: #FF3B30;
+    color: #DB3A1B; /*mail chimp red-2*/
 }
 
 /* ==========================================================================

@@ -1,7 +1,7 @@
 // global variables
 var ALPHA = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 var LOADED_MILES = ['#000000', 0.3, 6];
-var EMPTY_MILES = ['#FF3B30', 1, 2];
+var EMPTY_MILES = ['#DB3A1B', 1, 2];
 var MY_MAPTYPE_ID = 'JPD';
 var CHECKBOX = '-CHECKBOX';
 var SHIPPER = '-SHIPPER';
@@ -118,7 +118,7 @@ function initialize()
 	};
 
 	// render map
-	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+	map = new google.maps.Map(document.getElementById('map'), mapOptions);
 	
 	// add custom style
 	var customMapType = new google.maps.StyledMapType(mapStyle, styledMapOptions);

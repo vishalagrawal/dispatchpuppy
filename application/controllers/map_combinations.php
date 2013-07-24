@@ -16,7 +16,7 @@ class Map_combinations extends CI_Controller {
 
 		//create array to send to view
 		$data = array(
-			'title' 					  => 'All Lanes',
+			'title' 					  => 'Lane Combinations',
 			'google_map_center_location'  => $google_map_center_location,
 			'all_lanes' 			 	  => $all_lanes
 		);
