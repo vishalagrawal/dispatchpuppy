@@ -11,23 +11,46 @@ class Detail_from_tmw extends CI_Model {
     function get_lanes_detail()
     {
         // get all the distinct lane_ids from the database
-        $this->db->select('lane_id',COUNT('lane_id'));
+        $this->db->select(array('lane_id','COUNT(lane_id) as number_of_lanes'));
         $this->db->from('detail_from_tmw');
-        $this->db->limit(200,200);
         $this->db->group_by('lane_id'); 
-        $this->db->order_by('COUNT("lane_id")','asc');
-        $unique_lane_ids = $this->db->get();
-        
-        $all_lanes = array();
+        $this->db->order_by('number_of_lanes','asc'); //total = 542
+        //$this->db->limit(300); //set1
+        //$this->db->limit(200,300); //set2
+        //$this->db->limit(20,500); //set3
+        $this->db->limit(22,520); //set4
 
+        $unique_lane_ids = $this->db->get();
+
+        //echo $unique_lane_ids->num_rows();
+        $all_lanes = array();
+        
         if ($unique_lane_ids->num_rows() > 0)
         {
             foreach ($unique_lane_ids->result() as $ids)
             {  
                 // get all the lanes with the same lane_id
-                $this->db->select('*');
+                $this->db->select(array(
+                    'bill_date',
+                    'trip_number',
+                    'bill_to_name',
+                    'bill_to_city',
+                    'bill_to_state',
+                    'shipper_name',
+                    'shipper_city',
+                    'shipper_state',
+                    //'shipper_zipcode',
+                    'consignee_name',  
+                    'consignee_city',  
+                    'consignee_state',  
+                    'commodity_code', 
+                    //'consignee_zipcode',
+                    'rate',         
+                    'driver_pay',       
+                    'distance'));
                 $this->db->from('detail_from_tmw');
                 $this->db->where('lane_id',$ids->lane_id);
+                $this->db->order_by('bill_date','asc');
                 $all_particular_lanes = $this->db->get();
 
                 $particular_lane = array();
@@ -38,25 +61,23 @@ class Detail_from_tmw extends CI_Model {
                     {
                         // create lane
                         $lane = array(
+                            'bill_date'         => $row->bill_date,
                             'trip_number'       => $row->trip_number,
-                            'bill_to_code'      => $row->bill_to_code,
                             'bill_to_name'      => $row->bill_to_name,
                             'bill_to_city'      => $row->bill_to_city,
                             'bill_to_state'     => $row->bill_to_state,
-                            'shipper_code'      => $row->shipper_code,
                             'shipper_name'      => $row->shipper_name,
                             'shipper_city'      => $row->shipper_city,
                             'shipper_state'     => $row->shipper_state,
-                            'consignee_code'    => $row->consignee_code,
+                            //'shipper_zipcode'   => $row->shipper_zipcode,
                             'consignee_name'    => $row->consignee_name,
                             'consignee_city'    => $row->consignee_city,
                             'consignee_state'   => $row->consignee_state,
+                            //'consignee_zipcode' => $row->consignee_zipcode,
                             'commodity_code'    => $row->commodity_code,
                             'rate'              => $row->rate,
-                            'rate_unit'         => $row->rate_unit,
                             'driver_pay'        => $row->driver_pay,
                             'distance'          => $row->distance,
-                            'distance_unit'     => $row->distance_unit
                         );
                     
                         $particular_lane[] = $lane;

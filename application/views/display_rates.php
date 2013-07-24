@@ -23,21 +23,24 @@
 		{
 			echo 	'<table style="border: 0.1em dotted #000000; width: 100%;">'
 						.'<tr>'
-							.'<th>Trip Number</th>'
-							.'<th>Shipper Code</th>'
+							.'<th>Bill Date</th>'
+							//.'<th>Bill To Name</th>'
+                    		//.'<th>Bill To City</th>'
+                    		//.'<th>Bill To State</th>'
 							.'<th>Shipper Name</th>'
 							.'<th>Shipper City</th>'
 							.'<th>Shipper State</th>'
-							.'<th>Consignee Code</th>'
+							//.'<th>Shipper Zipcode</th>'
 							.'<th>Consignee Name</th>'
 							.'<th>Consignee City</th>'
 							.'<th>Consignee State</th>'
+							//.'<th>Consignee Zipcode</th>'
 							.'<th>Commodity</th>'
 							.'<th>Rate</th>'
 							.'<th>Driver Pay</th>'
 							.'<th>Distance</th>'
+							.'<th>Trip Number</th>'
 						.'</tr>';
-
 						$lane_rate = $particular_lane[0]['rate'];
 						$lane_driver_pay = $particular_lane[0]['driver_pay'];
 						$distance = $particular_lane[0]['distance'];
@@ -54,19 +57,23 @@
 							}
 
 							echo 	$tr
-										.'<td>'.$lane['trip_number'].'</td>'
-										.'<td>'.$lane['shipper_code'].'</td>'
+										.'<td>'.$lane['bill_date'].'</td>'
+										//.'<td>'.mb_convert_case($lane['bill_to_name'], MB_CASE_TITLE).'</td>'
+										//.'<td>'.mb_convert_case($lane['bill_to_city'], MB_CASE_TITLE).'</td>'
+										//.'<td>'.$lane['bill_to_state'].'</td>'
 										.'<td>'.mb_convert_case($lane['shipper_name'], MB_CASE_TITLE).'</td>'
 										.'<td>'.mb_convert_case($lane['shipper_city'], MB_CASE_TITLE).'</td>'
 										.'<td>'.$lane['shipper_state'].'</td>'
-										.'<td>'.$lane['consignee_code'].'</td>'
+										//.'<td>'.$lane['shipper_zipcode'].'</td>'
 										.'<td>'.mb_convert_case($lane['consignee_name'], MB_CASE_TITLE).'</td>'
 										.'<td>'.mb_convert_case($lane['consignee_city'], MB_CASE_TITLE).'</td>'
 										.'<td>'.$lane['consignee_state'].'</td>'
+										//.'<td>'.$lane['shipper_zipcode'].'</td>'
 										.'<td>'.$lane['commodity_code'].'</td>'
 										.'<td>'.$lane['rate'].'</td>'
 										.'<td>'.$lane['driver_pay'].'</td>'
 										.'<td>'.$lane['distance'].'</td>'
+										.'<td>'.$lane['trip_number'].'</td>'
 									.'</tr>';
 						}
 
