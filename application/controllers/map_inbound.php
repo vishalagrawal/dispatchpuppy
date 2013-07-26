@@ -14,7 +14,7 @@ class Map_inbound extends CI_Controller {
 
 		// create array to send to view
 		$data = array(
-			'title' 		  	=> 'Map Inbound',
+			'title' 		  	=> 'Consignee to Shipper Lanes',
 			'google_map_center_location'  => $google_map_center_location,
 			'all_combinations' 	=> $all_combinations
 		);

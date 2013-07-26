@@ -68,7 +68,7 @@ class Customers extends CI_Model {
         $this->db->join('customers', 'detail_from_tmw.consignee_code = customers.code','left');
         $this->db->group_by('consignee_code');
         $this->db->order_by('number_of_loads','desc');
-        $this->db->limit(1);
+        $this->db->limit(50);
         $all_consignees = $this->db->get();
 
         $all_combinations = array();

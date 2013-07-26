@@ -49,7 +49,7 @@
 						{
 							if($lane_rate != $lane['rate'] || $lane_driver_pay != $lane['driver_pay'] || $distance != $lane['distance'])
 							{
-								$tr = '<tr style="color:#FF0000">';
+								$tr = '<tr style="color:#FF0000; text-decoration:underline;">';
 							}
 							else
 							{

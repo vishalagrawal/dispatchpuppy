@@ -8,6 +8,7 @@
 ∞ update lanes database
 ∞ shipper -> consignee mapping
 ∞ dynamically change the date range to select how many loads per week in a given period
+∞ fix bug when you hover on commodities-code
 
 Future Tools
 ∞ overlaying icons (show the main icon when multiple icons are being dropped on the same location)
