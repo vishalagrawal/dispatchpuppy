@@ -9,6 +9,10 @@
 ∞ shipper -> consignee mapping
 ∞ dynamically change the date range to select how many loads per week in a given period
 ∞ fix bug when you hover on commodities-code
+∞ recenter map if no markers on map
+∞ recenter map when you remove a marker
+
+-- http://stackoverflow.com/questions/6100514/google-maps-v3-check-if-marker-is-present-on-map -- important link
 
 Future Tools
 ∞ overlaying icons (show the main icon when multiple icons are being dropped on the same location)

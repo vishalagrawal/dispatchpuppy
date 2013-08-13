@@ -8,6 +8,11 @@ class Detail_from_tmw extends CI_Model {
         parent::__construct();
     }
 
+    /*
+     *
+     *  get all the lanes from the details_from_tmw database
+     *
+     */
     function get_lanes_detail()
     {
         // get all the distinct lane_ids from the database
@@ -92,6 +97,11 @@ class Detail_from_tmw extends CI_Model {
         return $all_lanes;
     }
 
+    /*
+     *
+     * get all the suammry of lanes from the details_from_tmw database
+     *
+     */
     function get_lanes_summary()
     {
         // get all the distinct lane_ids from the database
@@ -152,6 +162,11 @@ class Detail_from_tmw extends CI_Model {
         return $all_lanes;
     }
 
+    /*
+     *
+     * get a list of all the active customers from details_from_tmw database
+     *
+     */
     function get_all_active_customers()
     {
         // get all active bill_to_customers from the database
@@ -263,6 +278,135 @@ class Detail_from_tmw extends CI_Model {
         }
         //var_dump($all_customers);
         return $all_customers;
+    }
+
+    /*
+     *
+     * 
+     * get all the unique commodities
+     *
+     */
+    function get_all_commodities()
+    {
+        // get all the distinct lane_ids from the database
+        $this->db->select(array('detail_from_tmw.commodity_code','COUNT(detail_from_tmw.commodity_code) as commoddity_frequency','commodity.commodity'));
+        $this->db->from('detail_from_tmw');
+         $this->db->join('commodity', 'detail_from_tmw.commodity_code = commodity.commodity_code','left');
+        $this->db->group_by('commodity_code');
+        $this->db->order_by('commoddity_frequency','desc');
+        $this->db->limit(1);
+        $unique_commodities = $this->db->get();
+        
+        $all_commodities = array();
+
+        if ($unique_commodities->num_rows() > 0)
+        {
+            foreach ($unique_commodities->result() as $row)
+            {  
+                // create array
+                $commodity_detail = array(
+                    'commodity_code'        => $row->commodity_code,
+                    'commodity'             => $row->commodity,
+                    'commodity_frequency'  => $row->commoddity_frequency
+                );
+
+                $all_commodities[] = $commodity_detail;
+            }
+        }
+        return $all_commodities;
+    }
+
+    /*
+     *
+     * 
+     * get all the unique commodities and their top ten weights with the size of the trailer
+     *
+     */
+    function get_all_commodities_and_top_ten_weights_with_trailer()
+    {
+        // get all the distinct trailer cubes from the database
+        $this->db->select('trailer_cube');
+        $this->db->from('trailers');
+        $this->db->group_by('trailer_cube');
+        $this->db->order_by('trailer_cube','desc');
+        $unique_trailer_cube_size = $this->db->get();
+
+        $all_trailer_cube_sizes = array();
+
+        if($unique_trailer_cube_size->num_rows > 0)
+        {
+            foreach($unique_trailer_cube_size->result() as $row)
+            {
+                $all_trailer_cube_sizes[] = $row->trailer_cube;
+            }
+        } 
+        
+
+        // get all the distinct lane_ids from the database
+        $this->db->select(array('detail_from_tmw.commodity_code','COUNT(detail_from_tmw.commodity_code) as commoddity_frequency','commodity.commodity'));
+        $this->db->from('detail_from_tmw');
+        $this->db->join('commodity', 'detail_from_tmw.commodity_code = commodity.commodity_code','left');
+        $this->db->group_by('commodity_code');
+        $this->db->order_by('commoddity_frequency','desc');
+        $unique_commodities = $this->db->get();
+        
+        $all_commodities = array();
+
+        if($unique_commodities->num_rows() > 0)
+        {
+            foreach($unique_commodities->result() as $row)
+            {  
+                                // create array
+                $commodity_detail = array(
+                    'commodity_code'        => $row->commodity_code,
+                    'commodity_name'        => $row->commodity,
+                    'commodity_frequency'   => $row->commoddity_frequency,
+                    'commodity_info'        => null
+                );
+
+                foreach($all_trailer_cube_sizes as $size)
+                {
+                    $commodity_detail['commodity_info'][$size] = null;
+
+                    $this->db->select(array('bill_date','trip_number','weight','tractor','trailer','trailer_cube','driver_id'));
+                    $this->db->from('detail_from_tmw');
+                    $this->db->where('commodity_code',$commodity_detail['commodity_code']);
+                    $this->db->where('trailer_cube',$size);
+                    $this->db->distinct();
+                    $this->db->join('trailers', 'detail_from_tmw.trailer = trailers.trailer_number','left');
+                    $this->db->order_by('weight','desc');
+                    $this->db->limit(10);
+                    $all_commodity_info = $this->db->get();
+
+                    $commodity_info = array();
+
+                    if($all_commodity_info->num_rows() > 0)
+                    {
+                        foreach($all_commodity_info->result() as $row)
+                        { 
+                            $unique_commodity_info = array(
+                                'bill_date'     => $row->bill_date,
+                                'trip_number'   => $row->trip_number,
+                                'weight'        => $row->weight,
+                                'tractor'       => $row->tractor,
+                                'trailer'       => $row->trailer,
+                                'trailer_cube'  => $row->trailer_cube,
+                                'driver_id'     => $row->driver_id
+                            );
+
+                            $commodity_info[] = $unique_commodity_info;
+                        }
+                    }
+
+                    $commodity_detail['commodity_info'][$size] = $commodity_info;
+                }
+
+                $all_commodities[] = $commodity_detail;
+            }
+        }
+        //var_dump($all_commodities);
+        return $all_commodities;
+        //return null;
     }
 
 }

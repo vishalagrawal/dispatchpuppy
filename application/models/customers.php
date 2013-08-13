@@ -61,65 +61,79 @@ class Customers extends CI_Model {
         }
     }
 
-    function get_all_consignees_and_inbound_shippers()
+    function get_all_consignees_and_inbound_shippers($type)
     {
-        $this->db->select(array('consignee_code','name','city','state','lat','lng','COUNT(consignee_code) AS number_of_loads'));
+        $code = $type.'_code';
+
+        if($type === 'consignee')
+        {
+            $secondary_code = 'shipper_code';
+        }
+        else if($type === 'shipper')
+        {
+            $secondary_code = 'consignee_code';
+        }
+
+        // get all primary
+        $this->db->select(array($code,'name','city','state','lat','lng','COUNT('.$code.') AS number_of_loads','commodity_id','detail_from_tmw.commodity_code','commodity'));
         $this->db->from('detail_from_tmw');
-        $this->db->join('customers', 'detail_from_tmw.consignee_code = customers.code','left');
-        $this->db->group_by('consignee_code');
+        $this->db->where('state','MD');
+        $this->db->join('customers', 'detail_from_tmw.'.$code.' = customers.code','left');
+        $this->db->join('commodity', 'detail_from_tmw.commodity_code = commodity.commodity_code','left');
+        $this->db->group_by(array($code,'detail_from_tmw.commodity_code'));
         $this->db->order_by('number_of_loads','desc');
-        $this->db->limit(50);
-        $all_consignees = $this->db->get();
+        $all_primary = $this->db->get();
 
         $all_combinations = array();
-        if ($all_consignees->num_rows() > 0)
+        if ($all_primary->num_rows() > 0)
         {
-            foreach($all_consignees->result() as $consignee)
+            foreach($all_primary->result() as $primary)
             {
-                $combination = array(
-                    'consignee_name'  => $consignee->name,
-                    'consignee_city'  => $consignee->city,
-                    'consignee_state' => $consignee->state,
-                    'consignee_lat'   => $consignee->lat,
-                    'consignee_lng'   => $consignee->lng,
-                    'number_of_loads' => $consignee->number_of_loads,
-                    'shippers'        => null
+                $primary_info = array(
+                    'primary_name'            => $primary->name,
+                    'primary_city'            => $primary->city,
+                    'primary_state'           => $primary->state,
+                    'primary_lat'             => $primary->lat,
+                    'primary_lng'             => $primary->lng,
+                    'primary_commodity_code'  => $primary->commodity_code,
+                    'primary_commodity'       => $primary->commodity,
+                    'number_of_loads'         => $primary->number_of_loads,
+                    'secondary'               => null
                 );
       
-                $this->db->select(array('shipper_code','name','city','state','lat','lng','commodity_id','detail_from_tmw.commodity_code','commodity','distance','COUNT(lane_id) AS number_of_loads'));
+                $this->db->select(array($secondary_code,'name','city','state','lat','lng','commodity_id','detail_from_tmw.commodity_code','commodity','distance','COUNT(lane_id) AS number_of_loads'));
                 $this->db->from('detail_from_tmw');
-                $this->db->where('consignee_code',$consignee->consignee_code);
-                $this->db->join('customers', 'detail_from_tmw.shipper_code = customers.code','left');
+                $this->db->where($code,$primary->$code);
+                $this->db->where('detail_from_tmw.commodity_code',$primary->commodity_code);
+                $this->db->join('customers', 'detail_from_tmw.'.$secondary_code.' = customers.code','left');
                 $this->db->join('commodity', 'detail_from_tmw.commodity_code = commodity.commodity_code','left');
                 $this->db->group_by('lane_id');
                 $this->db->order_by('number_of_loads','desc');
-                $all_consignee_shippers = $this->db->get();
+                $all_secondary = $this->db->get();
 
-                if($all_consignee_shippers->num_rows() > 0)
+                if($all_secondary->num_rows() > 0)
                 {
-                    foreach($all_consignee_shippers->result() as $consignee_shipper)
+                    foreach($all_secondary->result() as $secondary)
                     {
-                        //var_dump($consignee_shipper);
-                        $shipper = array(
-                            'shipper_name'      => $consignee_shipper->name,
-                            'shipper_city'      => $consignee_shipper->city,
-                            'shipper_state'     => $consignee_shipper->state,
-                            'shipper_lat'       => $consignee_shipper->lat,
-                            'shipper_lng'       => $consignee_shipper->lng,
-                            'commodity_code'    => $consignee_shipper->commodity_code,
-                            'commodity'         => $consignee_shipper->commodity,
-                            'miles'             => $consignee_shipper->distance,
-                            'number_of_loads'   => $consignee_shipper->number_of_loads
+                        $secondary_info = array(
+                            'secondary_name'            => $secondary->name,
+                            'secondary_city'            => $secondary->city,
+                            'secondary_state'           => $secondary->state,
+                            'secondary_lat'             => $secondary->lat,
+                            'secondary_lng'             => $secondary->lng,
+                            'secondary_commodity_code'  => $secondary->commodity_code,
+                            'secondary_commodity'       => $secondary->commodity,
+                            'miles'                     => $secondary->distance,
+                            'number_of_loads'           => $secondary->number_of_loads
                         );
 
-                        $combination['shippers'][$consignee_shipper->shipper_code.'-'.$consignee_shipper->commodity_id] = $shipper;
+                        $primary_info['secondary'][$secondary->$secondary_code.'-'.$secondary->commodity_id] = $secondary_info;
                     }
                 }
 
-                $all_combinations[$consignee->consignee_code] = $combination;
+                $all_combinations[$primary->$code.'-'.$primary->commodity_id] = $primary_info;
             }
         }
-        //var_dump($all_combinations);
         return $all_combinations;
     }
 }

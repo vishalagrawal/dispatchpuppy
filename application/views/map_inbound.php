@@ -101,12 +101,29 @@
 		</div>-->
 		<div id="all-lanes">
 			<?php
-				$SHIPPER_IMAGE = '-SHIPPER-IMAGE';
-				$CONSIGNEE_IMAGE = '-CONSIGNEE-IMAGE';
+				$IMAGE = '-IMAGE';
+
+				if($TYPE === '-CONSIGNEE')
+				{
+					$SECONDARY_TYPE = '-SHIPPER';
+					$PRIMARY_IMAGE = $TYPE.$IMAGE;
+					$PRIMARY_MEASLE = 'images/google-icons/red/measle-red.png';
+					$SECONDARY_IMAGE = $SECONDARY_TYPE.$IMAGE;
+					$SECONDARY_MEASLE = 'images/google-icons/green/measle-green.png';
+				}
+				else if($TYPE === '-SHIPPER')
+				{
+					$SECONDARY_TYPE = '-CONSIGNEE';
+					$PRIMARY_IMAGE = $TYPE.$IMAGE;
+					$PRIMARY_MEASLE = 'images/google-icons/green/measle-green.png';
+					$SECONDARY_IMAGE = $SECONDARY_TYPE.$IMAGE;
+					$SECONDARY_MEASLE = 'images/google-icons/red/measle-red.png';
+				}
+
 				$WEEKS = 20;
 				$EMPTY_DIV = '-EMPTY-DIV';
 				$i = 0;
-				foreach($all_combinations as $consignee_id => $consignee)
+				foreach($all_combinations as $primary_id => $primary)
 				{
 					// check lane number
 					if($i==0)
@@ -119,24 +136,24 @@
 					}
 
 					// check frequency
-					$consignee_frequency = floor($consignee['number_of_loads']/$WEEKS);
-					if($consignee_frequency < 1)
+					$primary_frequency = floor($primary['number_of_loads']/$WEEKS);
+					if($primary_frequency < 1)
 					{
-						$consignee_frequency = '&#60; 1';
+						$primary_frequency = '&#60; 1';
 					}
 
-					echo '<div class="primary-lane-info'.' '.$first_lane.'" id="'.$consignee_id.'" onclick="getConsigneeLocation(\''.$consignee_id.'\')">'
+					echo '<div class="primary-lane-info'.' '.$first_lane.'" id="'.$primary_id.'" onclick="getPrimaryLocation(\''.$primary_id.'\',\''.$TYPE.'\')">'
 							.'<div class="shipper-consignee-info">'
 								.'<div class="shipper">'
 									.'<div class="marker">'
-										.'<img id="'.$consignee_id.$CONSIGNEE_IMAGE.'" src="'.asset_url().'images/google-icons/red/measle-red.png" title="Consignee" "alt="Consignee">'
+										.'<img id="'.$primary_id.$PRIMARY_IMAGE.'" src="'.asset_url().$PRIMARY_MEASLE.'" title="Consignee" "alt="Consignee">'
 									.'</div>'
 									.'<div class="shipper-info">'
 										.'<div class="shipper-name">'
-											.$consignee['consignee_name']
+											.$primary['primary_name']
 										.'</div>'
 										.'<div class="shipper-address">'
-											.$consignee['consignee_city'].', '.$consignee['consignee_state']
+											.$primary['primary_city'].', '.$primary['primary_state']
 										.'</div>'
 									.'</div>'
 								.'</div>'
@@ -145,34 +162,40 @@
 							.'</div>'
 							.'<div class="frequency-commodity-miles-info">'
 								.'<div class="frequency">'
-									.$consignee_frequency.' <span>per week</span>'
+									.$primary_frequency.' <span>per week</span>'
+								.'</div>'
+								.'<div class="commodity-miles">'
+									.'<span class="commodity-info">'
+										.'<span class="commodity">'.$primary['primary_commodity'].'</span>'
+										.'<span class="commodity-code">'.$primary['primary_commodity_code'].'</span>'
+									.'</span>'
 								.'</div>'
 							.'</div>'
 						.'</div>';
 						
-						if($consignee['shippers'] != null)
+						if($primary['secondary'] != null)
 						{
-							foreach($consignee['shippers'] as $shipper_id => $shipper)
+							foreach($primary['secondary'] as $secondary_id => $secondary)
 							{									
 								// check frequency
-								$shipper_frequency = floor($shipper['number_of_loads']/$WEEKS);
-								if($shipper_frequency < 1)
+								$secondary_frequency = floor($secondary['number_of_loads']/$WEEKS);
+								if($secondary_frequency < 1)
 								{
-									$shipper_frequency = '&#60; 1';
+									$secondary_frequency = '&#60; 1';
 								}
 
-								echo '<div class="primary-lane-info sub-lane-info" id="'.$consignee_id.'-'.$shipper_id.'" onclick="getShipperLocation(\''.$consignee_id.'\',\''.$shipper_id.'\')">'
+								echo '<div class="primary-lane-info sub-lane-info" id="'.$primary_id.'-'.$secondary_id.'" onclick="getSecondaryLocation(\''.$primary_id.'\',\''.$secondary_id.'\',\''.$SECONDARY_TYPE.'\')">'
 										.'<div class="shipper-consignee-info">'
 											.'<div class="shipper">'
 												.'<div class="marker">'
-													.'<img id="'.$consignee_id.'-'.$shipper_id.$SHIPPER_IMAGE.'" src="'.asset_url().'images/google-icons/green/measle-green.png" title="Shipper" "alt="Shipper">'
+													.'<img id="'.$primary_id.'-'.$secondary_id.$SECONDARY_IMAGE.'" src="'.asset_url().$SECONDARY_MEASLE.'" title="Shipper" "alt="Shipper">'
 												.'</div>'
 												.'<div class="shipper-info">'
 													.'<div class="shipper-name">'
-														.$shipper['shipper_name']
+														.$secondary['secondary_name']
 													.'</div>'
 													.'<div class="shipper-address">'
-														.$shipper['shipper_city'].', '.$shipper['shipper_state']
+														.$secondary['secondary_city'].', '.$secondary['secondary_state']
 													.'</div>'
 												.'</div>'
 											.'</div>'
@@ -181,16 +204,16 @@
 										.'</div>'
 										.'<div class="frequency-commodity-miles-info">'
 											.'<div class="frequency">'
-												.$shipper_frequency.' <span>per week</span>'
+												.$secondary_frequency.' <span>per week</span>'
 											.'</div>'
 											.'<div class="commodity-miles">'
-												.'<span class="empty-miles" id="'.$consignee_id.'-'.$shipper_id.$EMPTY_DIV.'"></span>'
+												.'<span class="empty-miles" id="'.$primary_id.'-'.$secondary_id.$EMPTY_DIV.'"></span>'
 												.'<span class="commodity-info">'
-													.'<span class="commodity">'.$shipper['commodity'].'</span>'
-													.'<span class="commodity-code">'.$shipper['commodity_code'].'</span>'
+													.'<span class="commodity">'.$secondary['secondary_commodity'].'</span>'
+													.'<span class="commodity-code">'.$secondary['secondary_commodity_code'].'</span>'
 												.'</span>'
 												.' <b>&middot;</b> '
-												.round($shipper['miles']).' mi'
+												.round($secondary['miles']).' mi'
 											.'</div>'
 										.'</div>'
 									.'</div>';
