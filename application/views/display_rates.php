@@ -24,6 +24,7 @@
 			echo 	'<table style="border: 0.1em dotted #000000; width: 100%;">'
 						.'<tr>'
 							.'<th>Bill Date</th>'
+							.'<th>Bill To Code</th>'
 							//.'<th>Bill To Name</th>'
                     		//.'<th>Bill To City</th>'
                     		//.'<th>Bill To State</th>'
@@ -36,6 +37,7 @@
 							.'<th>Consignee State</th>'
 							//.'<th>Consignee Zipcode</th>'
 							.'<th>Commodity</th>'
+							//.'<th>Weight</th>'
 							.'<th>Rate</th>'
 							.'<th>Driver Pay</th>'
 							.'<th>Distance</th>'
@@ -58,6 +60,7 @@
 
 							echo 	$tr
 										.'<td>'.$lane['bill_date'].'</td>'
+										.'<td>'.$lane['bill_to_code'].'</td>'
 										//.'<td>'.mb_convert_case($lane['bill_to_name'], MB_CASE_TITLE).'</td>'
 										//.'<td>'.mb_convert_case($lane['bill_to_city'], MB_CASE_TITLE).'</td>'
 										//.'<td>'.$lane['bill_to_state'].'</td>'
@@ -70,9 +73,10 @@
 										.'<td>'.$lane['consignee_state'].'</td>'
 										//.'<td>'.$lane['shipper_zipcode'].'</td>'
 										.'<td>'.$lane['commodity_code'].'</td>'
-										.'<td>'.$lane['rate'].'</td>'
-										.'<td>'.$lane['driver_pay'].'</td>'
-										.'<td>'.$lane['distance'].'</td>'
+										//.'<td>'.$lane['weight'].'</td>'
+										.'<td>'.'$'.$lane['rate'].'</td>'
+										.'<td>'.'$'.$lane['driver_pay'].'</td>'
+										.'<td>'.$lane['distance'].'mi</td>'
 										.'<td>'.$lane['trip_number'].'</td>'
 									.'</tr>';
 						}

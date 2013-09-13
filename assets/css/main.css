@@ -152,29 +152,6 @@ html, body {
     box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
 }
 
-    #map {
-        height: 96%;
-        -webkit-box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
-        box-shadow: 0 1px 1px rgba(6,8,8,0.1); /*mail chimp box shadow*/
-    }
-
-    #key {
-        width: 100%;
-        height: 4%;
-        background-color: #F2F2F2; /* mail chimp gray-2 */
-        color: #5D5C5D;
-        font-size: 0.9em;
-    }
-        div.key-content {
-            width:16%;
-            height: 100%;
-            display: inline-block;
-        }
-
-        div.key-content img{
-            height: 10%;
-        }
-
 #control-panel {
     width: 38.2%; /*golden ration percentage*/
     height: 95%;

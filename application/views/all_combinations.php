@@ -43,58 +43,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="map-canvas">
-		<div id="map"></div>
-		<div id="key">
-			<div class="key-content">
-				<div class="marker">
-					<img id="" src="<?php echo asset_url();?>images/loaded_miles.png" title="Loaded Miles" alt="Loaded Miles">
-				</div>
-				<div class="key-info">
-					Loaded Miles
-				</div>
-			</div>
-			<div class="key-content">
-				<div class="marker">
-					<img id="" src="<?php echo asset_url();?>images/empty_miles.png" title="Empty Miles" alt="Empty Miles">
-				</div>
-				<div class="key-info">
-					Empty Miles
-				</div>
-			</div>
-			<div class="key-content">
-				<div class="marker">
-					<img id="" src="<?php echo asset_url();?>images/google-icons/green/measle-green.png" title="Shipper" alt="Shipper">
-				</div>
-				<div class="key-info">
-					Shipper
-				</div>
-			</div>
-			<div class="key-content">
-				<div class="marker">
-					<img id="" src="<?php echo asset_url();?>images/google-icons/red/measle-red.png" title="Consignee" alt="Consignee">
-				</div>
-				<div class="key-info">
-					Consignee
-				</div>
-			</div>
-			<div class="key-content">
-				<div class="marker">
-					<img id="" src="<?php echo asset_url();?>images/bins.png" title="BINS" alt="BINS">
-				</div>
-				<div class="key-info">
-					BINS
-				</div>
-			</div>
-			<div class="key-content">
-				<div class="marker">
-					<img id="" src="<?php echo asset_url();?>images/combinations.png" title="BINS" alt="BINS">
-				</div>
-				<div class="key-info">
-					Combinations
-				</div>
-			</div>
-		</div>
+	<div id="map-canvas">		
 	</div>
 	<div id="control-panel">
 		<div id="all-lanes">

@@ -24,7 +24,7 @@ class Check_rates extends CI_Controller {
 		// get the data from the lanes table
 		$this->load->model('Detail_from_tmw');
 		$all_lanes = $this->Detail_from_tmw->get_lanes_detail();
-
+		//var_dump($all_lanes);
 		$lanes_detail = array();
 
 		// find the inconsistent rates
@@ -43,7 +43,7 @@ class Check_rates extends CI_Controller {
 				}
 			}
 
-			if($flag)
+			if(!$flag)
 			{
 				$lanes_detail[$lane_id] = $particular_lane;
 			}
@@ -63,12 +63,12 @@ class Check_rates extends CI_Controller {
 	{
 		// get the data from the lanes table
 		$this->load->model('Detail_from_tmw');
-		$all_lanes = $this->Detail_from_tmw->get_lanes_summary();
+		$lanes_detail = $this->Detail_from_tmw->get_lanes_summary();
 
 		// create array to send to view
 		$data = array(
 			'title' 		  => 'Lanes Summary',
-			'all_lanes' 	  => $all_lanes
+			'lanes_detail' 	  => $lanes_detail
 		);
 		
 		// load the data in the view

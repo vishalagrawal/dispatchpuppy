@@ -118,7 +118,7 @@ function initialize()
 	};
 
 	// render map
-	map = new google.maps.Map(document.getElementById('map'), mapOptions);
+	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 	
 	// add custom style
 	var customMapType = new google.maps.StyledMapType(mapStyle, styledMapOptions);
